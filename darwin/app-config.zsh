@@ -32,7 +32,7 @@ where git &> /dev/null
 
 
 # swmm target created by the cmake build script
-TEST_CMD="run${PROJECT}"
+TEST_CMD="run-${PROJECT}"
 # path to executable in cmake build tree
 ABS_BUILD_PATH=$1
 
