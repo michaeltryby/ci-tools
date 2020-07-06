@@ -40,8 +40,9 @@ set "CUR_DIR=%CD%"
 set "SCRIPT_HOME=%~dp0"
 cd %SCRIPT_HOME%
 pushd ..
+pushd ..
 set "PROJ_DIR=%CD%"
-popd
+::popd
 
 
 cd %PROJ_DIR%\%TEST_HOME%

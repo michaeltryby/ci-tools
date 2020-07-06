@@ -35,7 +35,7 @@ cd %SCRIPT_HOME%
 pushd ..
 pushd ..
 set "PROJ_DIR=%CD%"
-popd
+:: popd
 
 :: check for requirements
 where cmake > nul
@@ -45,7 +45,7 @@ if %ERRORLEVEL% NEQ 0 ( echo "ERROR: cmake not installed" & exit /B 1 )
 :: determine project
 if not defined PROJECT (
   for %%i in (%PROJ_DIR%) do set PROJECT=%%~ni
-  set PROJECT=%PROJECT:~0,-8%
+  set PROJECT=%PROJECT:~0,-7%
   if not defined PROJECT (
     echo "ERROR: PROJECT could not be determined" & exit /B 1
   )
@@ -95,12 +95,12 @@ cmake -E make_directory %BUILD_HOME%
 
 
 if %TESTING% EQU 1 (
-  cmake -E chdir ./%BUILD_HOME% cmake -G"%GENERATOR%" -DBUILD_TESTS=ON ..^
-  && cmake --build ./%BUILD_HOME% --config Debug^
-  & echo. && cmake -E chdir ./%BUILD_HOME% ctest -C Debug --output-on-failure
+  cmake -E chdir .\%BUILD_HOME% cmake -G"%GENERATOR%" -DBUILD_TESTS=ON ..^
+  && cmake --build .\%BUILD_HOME% --config Debug^
+  & echo. && cmake -E chdir .\%BUILD_HOME% ctest -C Debug --output-on-failure
 ) else (
-  cmake -E chdir ./%BUILD_HOME% cmake -G"%GENERATOR%" -DBUILD_TESTS=OFF ..^
-  && cmake --build ./%BUILD_HOME% --config Release --target package
+  cmake -E chdir .\%BUILD_HOME% cmake -G"%GENERATOR%" -DBUILD_TESTS=OFF ..^
+  && cmake --build .\%BUILD_HOME% --config Release --target package
 )
 
 

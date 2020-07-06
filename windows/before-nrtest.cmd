@@ -34,7 +34,8 @@ set "TEST_HOME=nrtests"
 set "CUR_DIR=%CD%"
 set "SCRIPT_HOME=%~dp0"
 cd %SCRIPT_HOME%
-cd ..
+pushd ..
+pushd ..
 
 setlocal
 
