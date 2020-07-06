@@ -21,8 +21,7 @@
 #    2 - (SUT build id)
 #
 
-
-# check requirements
+# Check requirements
 where git &> /dev/null
 [[ ! $? ]] && { echo "ERROR: git not installed"; return 1 }
 
@@ -31,8 +30,13 @@ where git &> /dev/null
 [[ ! -v PLATFORM ]] && { echo "ERROR: PLATFORM must be defined"; return 1 }
 
 
-# swmm target created by the cmake build script
-TEST_CMD="run-${PROJECT}"
+# check if project is swmm otherwise EPANET
+if [[ ${PROJECT} == *"swmm"* ]]; then
+    TEST_CMD="run-${PROJECT}"
+else
+    TEST_CMD="run${PROJECT}"
+fi
+
 # path to executable in cmake build tree
 ABS_BUILD_PATH=$1
 
@@ -50,7 +54,7 @@ VERSION=$( git rev-parse --short HEAD )
 
 cat<<EOF
 {
-    "name" : "swmm",
+    "name" : "${PROJECT}",
     "version" : "${VERSION}",
     "description" : "${PLATFORM} ${BUILD_ID}",
     "setup_script" : "",

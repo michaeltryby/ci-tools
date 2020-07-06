@@ -23,23 +23,6 @@
 #    2 - (SUT build it)
 #
 
-unameOut="$(uname -s)"
-case "${unameOut}" in
-    Linux*)     ;&
-    Darwin*)    ABS_BUILD_PATH=$1
-                TEST_CMD="run-swmm"
-                ;;
-
-    MINGW*)     ;&
-    MSYS*)      # Remove leading '/c' from file path for nrtest
-                ABS_BUILD_PATH="$( echo "$1" | sed -e 's#/c##' )"
-                TEST_CMD="run-swmm.exe"
-                ;;
-
-    *)          # Machine unknown
-esac
-
-
 # Check requirements 
 type git >/dev/null 2>&1 || { echo "ERROR: git not installed"; exit 1; }
 
@@ -47,6 +30,16 @@ type git >/dev/null 2>&1 || { echo "ERROR: git not installed"; exit 1; }
 # check that env variables are set
 if [[ ! -v PROJECT ]]; then echo "ERROR: PROJECT must be defined"; exit 1; fi
 if [[ ! -v PLATFORM ]]; then echo "ERROR: PLATFORM must be defined"; exit 1; fi
+
+# check if project is swmm otherwise EPANET
+if [[ ${PROJECT} == *"swmm"* ]]; then
+    TEST_CMD="run-${PROJECT}"
+else
+    TEST_CMD="run${PROJECT}"
+fi
+
+# path to executable in cmake build tree
+ABS_BUILD_PATH=$1
 
 # process optional arguments
 if [ ! -z "$2" ]; then
@@ -63,7 +56,7 @@ build_description="${PLATFORM} ${BUILD_ID}"
 
 cat<<EOF
 {
-    "name" : "swmm",
+    "name" : "${PROJECT}",
     "version" : "${VERSION}",
     "description" : "${build_description}",
     "setup_script" : "",

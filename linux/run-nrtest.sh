@@ -62,7 +62,7 @@ cd ${TEST_HOME}
 if [[ ! -f "./apps/${PROJECT}-${SUT_BUILD_ID}.json" ]]
 then
     mkdir -p "apps"
-    ${SCRIPT_HOME}/app-config.zsh "${PROJ_DIR}/${BUILD_HOME}/bin" \
+    ${SCRIPT_HOME}/app-config.sh "${PROJ_DIR}/${BUILD_HOME}/bin" \
     ${SUT_BUILD_ID} ${SUT_VERSION} > "./apps/${PROJECT}-${SUT_BUILD_ID}.json"
 fi
 
@@ -96,6 +96,17 @@ echo "INFO: Comparing SUT artifacts to REF ${REF_BUILD_ID}"
 NRTEST_COMMAND="${NRTEST_COMPARE_CMD} ${TEST_OUTPUT_PATH} ${REF_OUTPUT_PATH} --rtol ${RTOL_VALUE} --atol ${ATOL_VALUE}"
 eval ${NRTEST_COMMAND}
 
+# Stage artifacts for upload
+cd ./benchmark
+
+if [ $? -eq 0 ]
+then
+    tar -zcvf benchmark-${PLATFORM}.tar.gz ./${PROJECT}-${SUT_BUILD_ID}
+    mv benchmark-${PLATFORM}.tar.gz ./${PROJ_DIR}/upload/benchmark-${PLATFORM}.tar.gz
+else
+    echo "INFO: nrtest compare exited successfully"
+    mv receipt.json ./${PROJ_DIR}/upload/receipt.json
+fi
 
 # return user to current dir
 cd ${CUR_DIR}
