@@ -122,10 +122,10 @@ cd .\benchmark
 if %RESULT% neq 0 (
   echo ERROR: nrtest compare exited with errors
   7z a benchmark-%PLATFORM%.zip .\%PROJECT%-%SUT_BUILD_ID% > nul
-  move /Y benchmark-%PLATFORM%.zip %PROJ_DIR%\upload\benchmark-%PLATFORM%.zip > nul
+  move /Y benchmark-%PLATFORM%.zip %PROJ_DIR%\upload > nul
 ) else (
   echo INFO: nrtest compare exited successfully
-  move /Y receipt.json %PROJ_DIR%\upload\receipt.json > nul
+  move /Y receipt.json %PROJ_DIR%\upload > nul
 )
 
 :: return user to their current dir and exit
