@@ -42,6 +42,12 @@ where cmake > nul
 if %ERRORLEVEL% neq 0 ( echo "ERROR: cmake not installed" & exit /B 1 )
 
 
+:: prepare for artifact upload
+if not exist upload (
+  mkdir upload
+)
+
+
 :: determine project
 if not defined PROJECT (
   for %%i in (%PROJ_DIR%) do set PROJECT=%%~ni

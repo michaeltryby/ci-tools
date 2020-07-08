@@ -59,11 +59,6 @@ if not exist apps\%PROJECT%-%SUT_BUILD_ID%.json (
     %PLATFORM% %SUT_BUILD_ID% > apps\%PROJECT%-%SUT_BUILD_ID%.json
 )
 
-:: prepare for artifact upload
-if not exist %PROJ_DIR%\upload (
-  mkdir %PROJ_DIR%\upload
-)
-
 
 :: recursively build test list
 :: set "TESTS=tests\examples"
