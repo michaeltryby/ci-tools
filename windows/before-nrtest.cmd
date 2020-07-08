@@ -101,7 +101,7 @@ curl -fsSL -o benchmark.zip %BENCHFILES_URL%
 
 
 :: set up symlinks for tests directory
-mklink /D .\tests .\%PROJECT%-nrtestsuite-%RELEASE_TAG:~1%\public > nul
+mklink /D .\tests .\%PROJECT%-nrtestsuite-%RELEASE_TAG:~1%\swmm-tests > nul
 
 
 endlocal
