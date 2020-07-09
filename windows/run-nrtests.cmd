@@ -101,7 +101,7 @@ if exist %TEST_OUTPUT_PATH% (
 echo INFO: Creating SUT %SUT_BUILD_ID% artifacts
 %NRTEST_EXECUTE_CMD% %TEST_APP_PATH% %TESTS% -o %TEST_OUTPUT_PATH%
 set RESULT=%ERRORLEVEL%
-set
+
 echo.
 
 :: perform nrtest compare
