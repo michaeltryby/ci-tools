@@ -38,7 +38,7 @@ export TEST_HOME="nrtests"
 REQUIRED_VARS=('PROJECT' 'BUILD_HOME' 'PLATFORM')
 for i in ${REQUIRED_VARS[@]}
 do
-    if [[ -v i ]]; then
+    if [[ -z "${i}" ]]; then
       echo "ERROR: $i must be defined"; exit 1; 
     fi
 done
