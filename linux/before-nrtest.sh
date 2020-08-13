@@ -48,7 +48,7 @@ CUR_DIR=${PWD}
 SCRIPT_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd ${SCRIPT_HOME}/../../
 
-if [[ -z "${RELEASE_TAG}" ]]; then
+if [[ -z "${NRTESTS_URL}" ]]; then
   # set URL to github repo with nrtest files
   NRTESTS_URL="https://github.com/OpenWaterAnalytics/${PROJECT}-example-networks"
 fi
