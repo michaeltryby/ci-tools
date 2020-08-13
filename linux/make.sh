@@ -27,20 +27,50 @@ export BUILD_HOME="build"
 CUR_DIR=${PWD}
 SCRIPT_HOME=$(cd `dirname $0` && pwd)
 
-echo INFO: Building ${PROJECT}  ...
 
 # Check to make sure PROJECT is defined
-if [[ ! -v PROJECT ]];
-then 
-    echo "ERROR: PROJECT must be defined"
+if [[ -z "${PROJECT}" ]]; then
+    echo "ERROR: PROJECT could not be determined"
     exit 1 
+else 
+    echo INFO: Building ${PROJECT}  ...
 fi
-
-echo INFO: Building ${PROJECT}  ...
 
 GENERATOR="Ninja"
 TESTING=0
 
+echo PRINTING ARGS $@
+
+POSITIONAL=()
+
+while [[ $# -gt 0 ]]
+do
+key="$1"
+
+case $key in
+    -g|--gen)
+    GENERATOR="$2"
+    shift # past argument
+    shift # past value
+    ;;
+    -t|--test)
+    TESTING="$2"
+    echo ${TESTING}
+    shift # past argument
+    shift # past value
+    ;;
+    --default)
+    DEFAULT=YES
+    shift # past argument
+    ;;
+    *)    # unknown option
+    POSITIONAL+=("$1") # save it in an array for later
+    shift # past argument
+    ;;
+esac
+done
+
+set -- "${POSITIONAL[@]}" # restore positional parameters
 
 cd ${SCRIPT_HOME}/../../
 
@@ -53,7 +83,7 @@ then
 # cmake --build ./${BUILD_HOME} --config Release --target all -- -v
     cmake -E chdir ./${BUILD_HOME} cmake -G ${GENERATOR} -DBUILD_TESTS=ON .. \
     && cmake --build ./${BUILD_HOME}  --config Debug \
-    & echo. && cmake -E chdir ./${BUILD_HOME}  ctest -C Debug --output-on-failure
+    && cmake -E chdir ./${BUILD_HOME}  ctest -C Debug --output-on-failure
 
 else
     cmake -E chdir ./${BUILD_HOME} cmake -G ${GENERATOR} -DBUILD_TESTS=OFF .. \

@@ -58,10 +58,10 @@ if not defined PROJECT (
 )
 
 :: GitHub Actions
-echo ::set-env name=PROJECT::%PROJECT%
+:: ::set-env name=PROJECT::%PROJECT%
 
 
-setlocal EnableDelayedExpansion
+:: setlocal EnableDelayedExpansion
 
 
 echo INFO: Building %PROJECT%  ...
@@ -111,7 +111,7 @@ if %TESTING% equ 1 (
 )
 
 
-endlocal
+::endlocal
 
 
 :: determine platform from CmakeCache.txt file
