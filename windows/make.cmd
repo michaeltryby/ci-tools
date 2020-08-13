@@ -58,10 +58,10 @@ if not defined PROJECT (
 )
 
 :: GitHub Actions
-:: ::set-env name=PROJECT::%PROJECT%
+echo::set-env name=PROJECT::%PROJECT%
 
 
-:: setlocal EnableDelayedExpansion
+setlocal EnableDelayedExpansion
 
 
 echo INFO: Building %PROJECT%  ...
