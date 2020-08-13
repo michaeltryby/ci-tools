@@ -48,7 +48,7 @@ CUR_DIR=${PWD}
 SCRIPT_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd ${SCRIPT_HOME}/../../
 
-if [[ -z ${RELEASE_TAG} ]]; then
+if [[ -z "${RELEASE_TAG}" ]]; then
   # set URL to github repo with nrtest files
   NRTESTS_URL="https://github.com/OpenWaterAnalytics/${PROJECT}-example-networks"
 fi
@@ -74,18 +74,18 @@ fi
 
 
 # build URLs for test and benchmark files; need to standardize urls or change into argument
-if [[ -v RELEASE_TAG ]]
-then
-  TESTFILES_URL="${NRTESTS_URL}/archive/${RELEASE_TAG}.tar.gz"
-
-  if [[ -v BENCHMARK_VER ]]
+if [[ ! -z "${RELEASE_TAG}" ]]
   then
-    BENCHFILES_URL="${NRTESTS_URL}/releases/download/${RELEASE_TAG}/$PROJECT-benchmark-${BENCHMARK_VER}.tar.gz"
-  else
-    echo "ERROR: tag %BENCHMARK_VER% is invalid" ; exit 1
+    TESTFILES_URL="${NRTESTS_URL}/archive/${RELEASE_TAG}.tar.gz"
 
-else
-  echo "ERROR: tag %RELEASE_TAG% is invalid" ; exit 1
+    if [[ ! -z "$BENCHMARK_VER" ]]
+      then
+        BENCHFILES_URL="${NRTESTS_URL}/releases/download/${RELEASE_TAG}/$PROJECT-benchmark-${BENCHMARK_VER}.tar.gz"
+      else
+        echo "ERROR: tag %BENCHMARK_VER% is invalid" ; exit 1
+      fi
+  else
+    echo "ERROR: tag %RELEASE_TAG% is invalid" ; exit 1
 fi
 
 echo INFO: Staging files for regression testing
