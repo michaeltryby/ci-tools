@@ -26,6 +26,7 @@ export BUILD_HOME="build"
 # determine project directories
 CUR_DIR=${PWD}
 SCRIPT_HOME=$(cd `dirname $0` && pwd)
+cd ${SCRIPT_HOME}/../../
 
 
 # Check to make sure PROJECT is defined
@@ -39,7 +40,6 @@ fi
 GENERATOR="Ninja"
 TESTING=0
 
-echo PRINTING ARGS $@
 
 POSITIONAL=()
 
@@ -72,7 +72,6 @@ done
 
 set -- "${POSITIONAL[@]}" # restore positional parameters
 
-cd ${SCRIPT_HOME}/../../
 
 # perform the build
 cmake -E make_directory ${BUILD_HOME}

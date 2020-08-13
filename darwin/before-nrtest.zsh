@@ -18,6 +18,7 @@
 #    PROJECT
 #    BUILD_HOME - relative path
 #    PLATFORM
+#    NRTESTS_URL
 #
 #  Arguments:
 #    1 - (RELEASE_TAG)  - Release tag
@@ -37,7 +38,11 @@ cd ${SCRIPT_HOME}/../../
 
 
 # set URL to github repo with nrtest files
-NRTESTS_URL="https://github.com/SWMM-Project/${PROJECT}-nrtestsuite"
+if [[ -z ${RELEASE_TAG} ]]; then
+  # set URL to github repo with nrtest files
+  NRTESTS_URL="https://github.com/OpenWaterAnalytics/${PROJECT}-example-networks"
+fi
+
 LATEST_URL="${NRTESTS_URL}/releases/latest"
 
 
