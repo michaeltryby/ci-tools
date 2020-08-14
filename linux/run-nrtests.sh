@@ -28,7 +28,7 @@
 REQUIRED_VARS=('PROJECT' 'BUILD_HOME' 'TEST_HOME' 'PLATFORM' 'REF_BUILD_ID')
 for i in ${REQUIRED_VARS[@]}
 do
-    if [[ -v i ]]; then
+    if [[ -z "${i}" ]]; then
       echo "ERROR: $i must be defined"; exit 1; 
     fi
 done
