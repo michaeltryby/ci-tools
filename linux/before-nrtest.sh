@@ -50,20 +50,24 @@ cd ${SCRIPT_HOME}/../../
 
 if [[ -z "${NRTESTS_URL}" ]]; then
   # set URL to github repo with nrtest files
-  NRTESTS_URL="https://github.com/OpenWaterAnalytics/${PROJECT}-example-networks"
+  NRTESTS_URL="https://github.com/OpenWaterAnalytics/${PROJECT}-nrtestsuite"
 fi
 
 LATEST_URL="${NRTESTS_URL}/releases/latest"
 
+# use release tag arg else determine latest when available (need to be released for ;o)
+# if [[ ! -z "$1" ]]
+# then
+#     RELEASE_TAG=$1
+# else
+#     RELEASE_TAG=$( curl -sI "${LATEST_URL}" | grep -Po 'tag\/\K(v\S+)' )
+#     RELEASE_TAG=$( basename ${RELEASE_TAG} ) # unnecessary 
+# fi
 
-# use release tag arg else determine latest
-if [[ ! -z "$1" ]]
-then
-    RELEASE_TAG=$1
-else
-    RELEASE_TAG=$( curl -sI "${LATEST_URL}" | grep -Po 'tag\/\K(v\S+)' )
-    RELEASE_TAG=$( basename ${RELEASE_TAG} ) # unnecessary 
-fi
+
+#hard coded for now
+EXAMPLES_VER="1.0.0"
+BENCHMARK_VER="5112"
 
 
 # check benchmark version 
@@ -74,13 +78,12 @@ fi
 
 
 # build URLs for test and benchmark files; need to standardize urls or change into argument
-if [[ ! -z "${RELEASE_TAG}" ]]
+if [[ ! -z "${EXAMPLES_VER}" ]]
   then
-    TESTFILES_URL="${NRTESTS_URL}/archive/${RELEASE_TAG}.tar.gz"
-
+    TESTFILES_URL="${NRTESTS_URL}/archive/v${EXAMPLES_VER}.tar.gz"
     if [[ ! -z "$BENCHMARK_VER" ]]
       then
-        BENCHFILES_URL="${NRTESTS_URL}/releases/download/${RELEASE_TAG}/$PROJECT-benchmark-${BENCHMARK_VER}.tar.gz"
+        BENCHFILES_URL="${NRTESTS_URL}/releases/download/v${EXAMPLES_VER}/$PROJECT-benchmark-${BENCHMARK_VER}.tar.gz"
       else
         echo "ERROR: tag %BENCHMARK_VER% is invalid" ; exit 1
       fi
@@ -105,7 +108,7 @@ curl -fsSL -o benchmark.tar.gz ${BENCHFILES_URL}
 
 # extract tests and benchmarks
 tar xzf nrtestfiles.tar.gz
-ln -s swmm-example-networks-${EXAMPLES_VER}/swmm-tests tests
+ln -s ${PROJECT}-nrtestsuite-${EXAMPLES_VER}/swmm-tests tests
 
 mkdir benchmark
 tar xzf benchmark.tar.gz -C benchmark
@@ -116,4 +119,5 @@ export REF_BUILD_ID="local"
 
 # return user to current dir
 cd ${CUR_DIR}
+
 

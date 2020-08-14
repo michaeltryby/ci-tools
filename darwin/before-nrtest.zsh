@@ -18,7 +18,6 @@
 #    PROJECT
 #    BUILD_HOME - relative path
 #    PLATFORM
-#    NRTESTS_URL
 #
 #  Arguments:
 #    1 - (RELEASE_TAG)  - Release tag
@@ -38,28 +37,32 @@ cd ${SCRIPT_HOME}/../../
 
 
 # set URL to github repo with nrtest files
-if [[ -z ${NRTESTS_URL} ]]; then
-  # set URL to github repo with nrtest files
-  NRTESTS_URL="https://github.com/OpenWaterAnalytics/${PROJECT}-example-networks"
+if [[ -v NRTESTS_URL ]]
+then
+NRTESTS_URL="https://github.com/OpenWaterAnalytics/${PROJECT}-nrtestsuite"
 fi
 
 LATEST_URL="${NRTESTS_URL}/releases/latest"
 
 
-# use release tag arg else determine latest
-if [[ ! -z "$1" ]]
-then
-    RELEASE_TAG=$1
-else
-    RELEASE_TAG=$( curl -sI "${LATEST_URL}" | grep -Po 'tag\/\K(v\S+)' )
-    RELEASE_TAG=$( basename ${RELEASE_TAG} ) # unnecessary 
-fi
+# use release tag arg else determine latest hard coded for now.
+# if [[ ! -z "$1" ]]
+# then
+#     RELEASE_TAG=$1
+# else
+#     RELEASE_TAG=$( curl -sI "${LATEST_URL}" | grep -Po 'tag\/\K(v\S+)' )
+#     RELEASE_TAG=$( basename ${RELEASE_TAG} ) # unnecessary 
+# fi
+
+#hard coded for now
+EXAMPLES_VER="1.0.0"
+BENCHMARK_VER="5112"
 
 # build URLs for test and benchmark files
-if [[ -v RELEASE_TAG ]]
+if [[ -v EXAMPLES_VER ]]
 then
-  TESTFILES_URL="${NRTESTS_URL}/archive/${RELEASE_TAG}.tar.gz"
-  BENCHFILES_URL="${NRTESTS_URL}/releases/download/${RELEASE_TAG}/benchmark-${PLATFORM}.tar.gz"
+  TESTFILES_URL="${NRTESTS_URL}/archive/v${EXAMPLES_VER}.tar.gz"
+  BENCHFILES_URL="${NRTESTS_URL}/releases/download/v${EXAMPLES_VER}/$PROJECT-benchmark-${BENCHMARK_VER}.tar.gz"
 else
   echo "ERROR: tag %RELEASE_TAG% is invalid" ; return 1
 fi
@@ -71,9 +74,12 @@ if [[ -d ${TEST_HOME} ]]
 then
   rm -rf ${TEST_HOME}
 fi
+
 mkdir ${TEST_HOME}
 cd ${TEST_HOME}
 
+echo ${TESTFILES_URL}
+echo ${BENCHFILES_URL}
 
 # retrieve tests and benchmarks for regression testing
 curl -fsSL -o nrtestfiles.tar.gz ${TESTFILES_URL}
@@ -82,7 +88,8 @@ curl -fsSL -o benchmarks.tar.gz ${BENCHFILES_URL}
 
 # extract tests and setup symlink
 tar xzf nrtestfiles.tar.gz
-ln -s ./${PROJECT}-nrtestsuite-${RELEASE_TAG:1}/public tests
+ln -s ${PROJECT}-nrtestsuite-${EXAMPLES_VER}/swmm-tests tests
+
 
 # create benchmark dir and extract benchmarks
 mkdir benchmark

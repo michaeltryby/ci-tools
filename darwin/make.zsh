@@ -86,8 +86,8 @@ else
     && cp ./${BUILD_HOME}/*.zip ./upload >&1
 fi
 
-# cmake -E chdir ${BUILD_HOME} cmake -G ${GENERATOR} ..
-# cmake --build ./${BUILD_HOME} --config Release --target all -- -v
+cmake -E chdir ${BUILD_HOME} cmake -G ${GENERATOR} ..
+cmake --build ./${BUILD_HOME} --config Release --target all -- -v
 
 
 export PLATFORM="Darwin"
