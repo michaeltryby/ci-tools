@@ -37,7 +37,7 @@ else
     echo INFO: Building ${PROJECT}  ...
 fi
 
-GENERATOR="Make"
+GENERATOR="Unix Makefiles"
 TESTING=0
  
 

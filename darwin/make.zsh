@@ -35,7 +35,7 @@ cd ${SCRIPT_HOME}/../../
 
 echo INFO: Building ${PROJECT}  ...
 
-GENERATOR="Ninja"
+GENERATOR="Unix Makefiles"
 TESTING=0
 
 POSITIONAL=()
