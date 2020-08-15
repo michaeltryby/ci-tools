@@ -37,7 +37,7 @@ else
     echo INFO: Building ${PROJECT}  ...
 fi
 
-GENERATOR="Ninja"
+GENERATOR="Make"
 TESTING=0
  
 
