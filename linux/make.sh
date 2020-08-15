@@ -39,32 +39,25 @@ fi
 
 GENERATOR="Unix Makefiles"
 TESTING=0
- 
+
 
 POSITIONAL=()
 
 while [[ $# -gt 0 ]]
 do
 key="$1"
-
 case $key in
     -g|--gen)
     GENERATOR="$2"
+    echo generator ${GENERATOR}
     shift # past argument
     shift # past value
     ;;
     -t|--test)
-    TESTING="$2"
-    echo ${TESTING}
-    shift # past argument
-    shift # past value
-    ;;
-    --default)
-    DEFAULT=YES
+    TESTING=1
     shift # past argument
     ;;
     *)    # unknown option
-    POSITIONAL+=("$1") # save it in an array for later
     shift # past argument
     ;;
 esac
