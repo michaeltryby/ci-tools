@@ -29,7 +29,6 @@ set "PLATFORM=win32"
 
 
 :: determine project directory
-set "CUR_DIR=%CD%"
 set "SCRIPT_HOME=%~dp0"
 cd %SCRIPT_HOME%
 pushd ..
@@ -127,5 +126,5 @@ if not defined PLATFORM ( echo "ERROR: PLATFORM could not be determined" & exit 
 echo ::set-env name=PLATFORM::%PLATFORM%
 
 
-:: return to users current dir
-cd %CUR_DIR%
+:: return to users to project directory
+cd %PROJ_DIR%

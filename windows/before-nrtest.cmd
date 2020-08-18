@@ -31,11 +31,11 @@
 set "TEST_HOME=nrtests"
 
 :: determine project directory
-set "CUR_DIR=%CD%"
 set "SCRIPT_HOME=%~dp0"
 cd %SCRIPT_HOME%
 pushd ..
 pushd ..
+set "PROJECT_DIR=%CD%"
 
 setlocal
 
@@ -119,4 +119,4 @@ echo ::set-env name=REF_BUILD_ID::%REF_BUILD_ID%
 
 
 :: return to users current directory
-cd %CUR_DIR%
+cd %PROJECT_DIR%

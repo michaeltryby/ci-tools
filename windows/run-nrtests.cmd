@@ -36,7 +36,6 @@ for %%v in (PROJECT BUILD_HOME TEST_HOME PLATFORM REF_BUILD_ID) do (
 
 
 :: determine project directory
-set "CUR_DIR=%CD%"
 set "SCRIPT_HOME=%~dp0"
 cd %SCRIPT_HOME%
 pushd ..
@@ -124,5 +123,5 @@ if %RESULT% neq 0 (
 )
 
 :: return user to their current dir and exit
-cd %CUR_DIR%
+cd %PROJ_DIR%
 exit /B %RESULT%
