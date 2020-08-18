@@ -31,10 +31,10 @@ for i in ${REQUIRED_VARS}; do
 done
 
 # determine project directory
-CUR_DIR=${PWD}
 SCRIPT_HOME=${0:a:h}
-cd ${SCRIPT_HOME}/../../
-
+cd ${SCRIPT_HOME}
+cd ./../../
+PROJECT_DIR=${PWD}
 
 # set URL to github repo with nrtest files
 if [[ -v NRTESTS_URL ]]
@@ -100,4 +100,4 @@ tar xzf benchmarks.tar.gz -C benchmark
 export REF_BUILD_ID="local"
 
 # return user to current dir
-cd ${CUR_DIR}
+cd ${PROJECT_DIR}

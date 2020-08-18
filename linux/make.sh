@@ -24,9 +24,10 @@
 export BUILD_HOME="build"
 
 # determine project directories
-CUR_DIR=${PWD}
 SCRIPT_HOME=$(cd `dirname $0` && pwd)
-cd ${SCRIPT_HOME}/../../
+cd ${SCRIPT_HOME}
+cd ../../
+PROJECT_DIR=$PWD
 
 
 # Check to make sure PROJECT is defined

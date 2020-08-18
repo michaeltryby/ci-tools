@@ -44,9 +44,10 @@ do
 done
 
 # determine project directory
-CUR_DIR=${PWD}
 SCRIPT_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-cd ${SCRIPT_HOME}/../../
+cd ${SCRIPT_HOME}
+cd ./../../
+PROJECT_DIR=${PWD}
 
 if [[ -z "${NRTESTS_URL}" ]]; then
   # set URL to github repo with nrtest files
@@ -118,6 +119,6 @@ tar xzf benchmark.tar.gz -C benchmark
 export REF_BUILD_ID="local"
 
 # return user to current dir
-cd ${CUR_DIR}
+cd ${PROJECT_DIR}
 
 

@@ -26,9 +26,10 @@
 export BUILD_HOME="build"
 
 # determine project directory
-CUR_DIR=${PWD}
 SCRIPT_HOME=${0:a:h}
-cd ${SCRIPT_HOME}/../../
+cd ${SCRIPT_HOME} 
+cd ./../../
+PROJECT_DIR=${PWD}
 
 # Check to make sure PROJECT is defined
 [[ ! -v PROJECT ]] && { echo "ERROR: PROJECT must be defined"; return 1 }
@@ -87,4 +88,4 @@ export PLATFORM="Darwin"
 
 
 # return user to current dir
-cd ${CUR_DIR}
+cd ${PROJECT_DIR}

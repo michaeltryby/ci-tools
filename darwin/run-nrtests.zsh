@@ -46,7 +46,6 @@ fi
 
 
 # determine project root directory
-CUR_DIR=${PWD}
 SCRIPT_HOME=${0:a:h}
 cd ${SCRIPT_HOME}/../../
 PROJ_DIR=${PWD}
@@ -106,4 +105,4 @@ else
 fi
 
 # return user to current dir
-cd ${CUR_DIR}
+cd ${PROJ_DIR}
