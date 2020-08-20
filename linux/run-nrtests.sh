@@ -50,7 +50,8 @@ fi
 
 # determine project root directory
 SCRIPT_HOME=$(cd `dirname $0` && pwd)
-cd ${SCRIPT_HOME}/../../
+cd ${SCRIPT_HOME}
+cd ./../../
 PROJ_DIR=${PWD}
 
 
@@ -61,7 +62,7 @@ cd ${TEST_HOME}
 if [[ ! -f "./apps/${PROJECT}-${SUT_BUILD_ID}.json" ]]
 then
     mkdir -p "apps"
-    ${SCRIPT_HOME}/app-config.sh "${PROJ_DIR}/${BUILD_HOME}/bin" \
+    ${SCRIPT_HOME}/app-config.sh "${PROJ_DIR}/${BUILD_HOME}/bin/Release" \
     ${SUT_BUILD_ID} ${SUT_VERSION} > "./apps/${PROJECT}-${SUT_BUILD_ID}.json"
 fi
 

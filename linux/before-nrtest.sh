@@ -118,6 +118,9 @@ tar xzf benchmark.tar.gz -C benchmark
 # determine REF_BUILD_ID from manifest file
 export REF_BUILD_ID="local"
 
+# GitHub Actions
+echo ::set-env name=REF_BUILD_ID::%REF_BUILD_ID%
+
 # return user to current dir
 cd ${PROJECT_DIR}
 

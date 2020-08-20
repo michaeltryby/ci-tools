@@ -86,6 +86,8 @@ cmake --build ./${BUILD_HOME} --config Release --target all -- -v
 
 export PLATFORM="Darwin"
 
+#GitHub Actions
+echo ::set-env name=PLATFORM::%PLATFORM%
 
 # return user to current dir
 cd ${PROJECT_DIR}

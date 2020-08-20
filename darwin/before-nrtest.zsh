@@ -18,9 +18,17 @@
 #    PROJECT
 #    BUILD_HOME - relative path
 #    PLATFORM
+#    NRTESTS_URL
 #
 #  Arguments:
 #    1 - (RELEASE_TAG)  - Release tag
+#    2 - (BENCHMARK_VER) - Optional benchmark version
+#
+#  Note: 
+#    Tests and benchmark files are stored in the swmm-example-networks repo.
+#    This script retreives them using a stable URL associated with a release on 
+#    GitHub and stages the files for nrtest to run. The script assumes that 
+#    before-test.sh and app-config.sh are located together in the same folder. 
 
 export TEST_HOME="nrtests"
 
@@ -98,6 +106,10 @@ tar xzf benchmarks.tar.gz -C benchmark
 
 # determine REF_BUILD_ID from manifest file
 export REF_BUILD_ID="local"
+
+
+# GitHub Actions
+echo ::set-env name=REF_BUILD_ID::%REF_BUILD_ID%
 
 # return user to current dir
 cd ${PROJECT_DIR}

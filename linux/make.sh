@@ -86,5 +86,9 @@ fi
 
 export PLATFORM="Linux"
 
+#GitHub Actions
+echo ::set-env name=PLATFORM::%PLATFORM%
+
+
 # return user to current dir
 cd ${PROJECT_DIR}
