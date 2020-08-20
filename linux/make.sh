@@ -27,8 +27,10 @@ export BUILD_HOME="build"
 SCRIPT_HOME=$(cd `dirname $0` && pwd)
 cd ${SCRIPT_HOME}
 cd ../../
-PROJECT_DIR=$PWD
+PROJECT_DIR=${PWD}
 
+echo $SCRIPT_HOME
+echo $PROJECT_DIR
 
 # Check to make sure PROJECT is defined
 if [[ -z "${PROJECT}" ]]; then
@@ -85,4 +87,4 @@ fi
 export PLATFORM="Linux"
 
 # return user to current dir
-cd ${CUR_DIR}
+cd ${PROJECT_DIR}
