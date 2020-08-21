@@ -63,7 +63,6 @@ if [[ ! -z "$1" ]]
 then
     RELEASE_TAG=$1
 else
-    echo New
     LATEST_URL="${NRTESTS_URL}/releases/latest"
     LATEST_URL=${LATEST_URL/"github.com"/"api.github.com/repos"}
     RELEASE_TAG=$( curl --silent "${LATEST_URL}" | grep -o '"tag_name": *"[^"]*"' | grep -o '"[^"]*"$' )
@@ -94,18 +93,18 @@ fi
 mkdir ${TEST_HOME}
 cd ${TEST_HOME}
 
-# retrieve swmm-examples for regression testing
-curl -fsSL -o nrtestfiles.tar.gz ${TESTFILES_URL}
+# retrieve swmm-examples for regression testing tar.gz 
+curl -fsSL -o nrtestfiles.zip ${TESTFILES_URL}
 # retrieve swmm benchmark results
-curl -fsSL -o benchmark.tar.gz ${BENCHFILES_URL}
+curl -fsSL -o benchmark.zip ${BENCHFILES_URL}
 
 # extract tests and benchmarks
-tar xzf nrtestfiles.tar.gz
+tar xzf nrtestfiles.zip
 ln -s ${PROJECT}-nrtestsuite-${RELEASE_TAG}/public tests
 
 # create benchmark dir and extract benchmarks
 mkdir benchmark
-tar xzf benchmark.tar.gz -C benchmark
+tar xzf benchmark.zip -C benchmark
 
 #determine ref_build_id
 MANIFEST_FILE=$( find . -name manifest.json )
