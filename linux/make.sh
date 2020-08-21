@@ -20,6 +20,14 @@
 #    -t builds and runs unit tests (requires Boost)
 
 
+# Check to make sure PROJECT is defined
+if [[ -z "${PROJECT}" ]]; then
+    echo "ERROR: PROJECT could not be determined"
+    exit 1 
+else 
+    echo INFO: Building ${PROJECT}  ...
+fi
+
 # set global defaults
 export BUILD_HOME="build"
 
@@ -29,16 +37,7 @@ cd ${SCRIPT_HOME}
 cd ../../
 PROJECT_DIR=${PWD}
 
-echo $SCRIPT_HOME
-echo $PROJECT_DIR
-
-# Check to make sure PROJECT is defined
-if [[ -z "${PROJECT}" ]]; then
-    echo "ERROR: PROJECT could not be determined"
-    exit 1 
-else 
-    echo INFO: Building ${PROJECT}  ...
-fi
+echo INFO: Building ${PROJECT}  ...
 
 GENERATOR="Unix Makefiles"
 TESTING=0
@@ -70,10 +69,8 @@ set -- "${POSITIONAL[@]}" # restore positional parameters
 # perform the build
 cmake -E make_directory ${BUILD_HOME}
 
-if [ ${TESTING}=1 ]; 
+if [ ${TESTING} -eq 1 ]; 
 then
-# cmake -E chdir ${BUILD_HOME} cmake -G ${GENERATOR} ..
-# cmake --build ./${BUILD_HOME} --config Release --target all -- -v
     cmake -E chdir ./${BUILD_HOME} cmake -G "${GENERATOR}" -DBUILD_TESTS=ON .. \
     && cmake --build ./${BUILD_HOME}  --config Debug \
     && cmake -E chdir ./${BUILD_HOME}  ctest -C Debug --output-on-failure
@@ -87,7 +84,7 @@ fi
 export PLATFORM="Linux"
 
 #GitHub Actions
-echo ::set-env name=PLATFORM::%PLATFORM%
+echo ::set-env name=PLATFORM::$PLATFORM
 
 
 # return user to current dir

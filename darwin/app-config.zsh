@@ -4,21 +4,24 @@
 #  app-config.sh - Generates nrtest app configuration file for test executable
 #
 #  Date Created: 11/15/2017
-#       Updated: 4/1/2020
+#       Updated: 08/21/2020
 #
 #  Author:       Michael E. Tryby
 #                US EPA - ORD/NRMRL
+#
+#                Caleb A. Buahin
+#                Xylem Inc.
 #
 #  Requires:
 #    git
 #
 #  Environment Variables:
 #    PROJECT
-#    PLATFORM
 #
 #  Arguments:
 #    1 - absolute path to test executable
-#    2 - (SUT build id)
+#    2 - Platform
+#    3 - (SUT build id)
 #
 
 # Check requirements
@@ -27,22 +30,23 @@ where git &> /dev/null
 
 # check that env variables are set
 [[ ! -v PROJECT ]] && { echo "ERROR: PROJECT must be defined"; return 1 }
-[[ ! -v PLATFORM ]] && { echo "ERROR: PLATFORM must be defined"; return 1 }
 
 
 # check if project is swmm otherwise EPANET
-if [[ ${PROJECT} == *"swmm"* ]]; then
-    TEST_CMD="run-${PROJECT}"
-else
-    TEST_CMD="run${PROJECT}"
-fi
+TEST_CMD="run${PROJECT}"
 
 # path to executable in cmake build tree
 ABS_BUILD_PATH=$1
 
 # process optional arguments
 if [ ! -z "$2" ]; then
-    BUILD_ID=$2
+    PLATFORM=$2
+else
+    PLATFORM="unknown"
+fi
+
+if [ ! -z "$3" ]; then
+    BUILD_ID=$3
 else
     BUILD_ID="unknown"
 fi

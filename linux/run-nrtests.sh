@@ -21,8 +21,7 @@
 #    REF_BUILD_ID
 #
 #  Arguments:
-#    1 - (SUT_VERSION)  - optional argument
-#    2 - (SUT_BUILD_ID) - optional argument
+#    1 - (SUT_BUILD_ID) - optional argument
 
 # check that env variables are set
 REQUIRED_VARS=('PROJECT' 'BUILD_HOME' 'TEST_HOME' 'PLATFORM' 'REF_BUILD_ID')
@@ -33,21 +32,6 @@ do
     fi
 done
 
-
-# process optional arguments
-if [ ! -z "$1" ]; then
-    SUT_VERSION=$1
-else
-    SUT_VERSION="unknown"
-fi
-
-if [ ! -z "$2" ]; then
-    SUT_BUILD_ID=$2
-else
-    SUT_BUILD_ID="local"
-fi
-
-
 # determine project root directory
 SCRIPT_HOME=$(cd `dirname $0` && pwd)
 cd ${SCRIPT_HOME}
@@ -56,14 +40,22 @@ PROJ_DIR=${PWD}
 
 
 # change current directory to test suite
-cd ${TEST_HOME}
+cd ${PROJ_DIR}/${TEST_HOME}
+
+# process optional arguments
+if [ ! -z "$1" ]; then
+    SUT_BUILD_ID=$1
+else
+    SUT_BUILD_ID="local"
+fi
+
 
 # check if app config file exists
 if [[ ! -f "./apps/${PROJECT}-${SUT_BUILD_ID}.json" ]]
 then
     mkdir -p "apps"
     ${SCRIPT_HOME}/app-config.sh "${PROJ_DIR}/${BUILD_HOME}/bin/Release" \
-    ${SUT_BUILD_ID} ${SUT_VERSION} > "./apps/${PROJECT}-${SUT_BUILD_ID}.json"
+    ${PLATFORM} ${SUT_BUILD_ID} ${SUT_VERSION} > "./apps/${PROJECT}-${SUT_BUILD_ID}.json"
 fi
 
 # build list of directories contaiing tests
@@ -91,6 +83,8 @@ echo "INFO: Creating SUT ${SUT_BUILD_ID} artifacts"
 NRTEST_COMMAND="${NRTEST_EXECUTE_CMD} ${TEST_APP_PATH} ${TESTS} -o ${TEST_OUTPUT_PATH}"
 eval ${NRTEST_COMMAND}
 
+
+
 # perform nrtest compare
 echo "INFO: Comparing SUT artifacts to REF ${REF_BUILD_ID}"
 NRTEST_COMMAND="${NRTEST_COMPARE_CMD} ${TEST_OUTPUT_PATH} ${REF_OUTPUT_PATH} --rtol ${RTOL_VALUE} --atol ${ATOL_VALUE}"
@@ -101,6 +95,7 @@ cd ./benchmark
 
 if [ $? -eq 0 ]
 then
+    echo ERROR: nrtest exited with errors
     tar -zcvf benchmark-${PLATFORM}.tar.gz ./${PROJECT}-${SUT_BUILD_ID}
     mv benchmark-${PLATFORM}.tar.gz ./${PROJ_DIR}/upload/benchmark-${PLATFORM}.tar.gz
 else
@@ -110,3 +105,5 @@ fi
 
 # return user to current dir
 cd ${PROJ_DIR}
+
+exit $?
