@@ -72,7 +72,7 @@ then
     && cmake -E chdir ./${BUILD_HOME}  ctest -C Debug --output-on-failure
 else
     echo "Building release"
-    cmake -E chdir ./${BUILD_HOME} cmake -G ${GENERATOR} -DBUILD_TESTS=OFF .. \
+    cmake -E chdir ./${BUILD_HOME} cmake -G "${GENERATOR}" -DBUILD_TESTS=OFF .. \
     && cmake --build ./${BUILD_HOME} --config Release --target package \
     && cp ./${BUILD_HOME}/*.zip ./upload >&1
 fi
