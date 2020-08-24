@@ -55,8 +55,11 @@ if [[ ! -f "./apps/${PROJECT}-${SUT_BUILD_ID}.json" ]]
 then
     mkdir -p "apps"
     ${SCRIPT_HOME}/app-config.sh "${PROJ_DIR}/${BUILD_HOME}/bin/Release" \
-    ${PLATFORM} ${SUT_BUILD_ID} ${SUT_VERSION} > "./apps/${PROJECT}-${SUT_BUILD_ID}.json"
+    ${PLATFORM} ${SUT_BUILD_ID} > "./apps/${PROJECT}-${SUT_BUILD_ID}.json"
 fi
+
+echo display build directory 
+ls -l  ${PROJ_DIR}/${BUILD_HOME}/bin/Release
 
 # build list of directories contaiing tests
 TESTS=$( find ./tests -mindepth 1 -type d -follow | paste -sd " " - )
