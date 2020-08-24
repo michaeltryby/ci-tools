@@ -30,6 +30,7 @@ fi
 
 # set global defaults
 export BUILD_HOME="build"
+export PLATFORM="linux"
 
 # determine project directories
 SCRIPT_HOME=$(cd `dirname $0` && pwd)
@@ -37,11 +38,15 @@ cd ${SCRIPT_HOME}
 cd ../../
 PROJECT_DIR=${PWD}
 
+# prepare for artifact upload
+if [ ! -d upload ]; then
+    mkdir upload
+fi 
+
 echo INFO: Building ${PROJECT}  ...
 
 GENERATOR="Unix Makefiles"
 TESTING=0
-
 
 POSITIONAL=()
 
@@ -81,11 +86,8 @@ else
     && cp ./${BUILD_HOME}/*.zip ./upload >&1
 fi
 
-export PLATFORM="linux"
-
 #GitHub Actions
 echo ::set-env name=PLATFORM::$PLATFORM
-
 
 # return user to current dir
 cd ${PROJECT_DIR}

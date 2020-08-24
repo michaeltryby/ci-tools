@@ -31,6 +31,10 @@ cd ${SCRIPT_HOME}
 cd ./../../
 PROJECT_DIR=${PWD}
 
+# prepare for artifact upload
+if [ ! -d upload ]; then
+    mkdir upload
+fi 
 
 echo INFO: Building ${PROJECT}  ...
 

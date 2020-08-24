@@ -50,8 +50,6 @@ else
     SUT_BUILD_ID="local"
 fi
 
-echo $PWD
-
 # check if app config file exists
 if [[ ! -a "./apps/${PROJECT}-${SUT_BUILD_ID}.json" ]]
 then
