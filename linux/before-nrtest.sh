@@ -93,8 +93,12 @@ fi
 mkdir ${TEST_HOME}
 cd ${TEST_HOME}
 
+
+echo downloading nrtestfiles: ${TESTFILES_URL}
 # retrieve swmm-examples for regression testing tar.gz 
 curl -fsSL -o nrtestfiles.tar.gz ${TESTFILES_URL}
+
+echo downloading benchmark: ${BENCHFILES_URL}
 # retrieve swmm benchmark results
 curl -fsSL -o benchmark.tar.gz ${BENCHFILES_URL}
 
