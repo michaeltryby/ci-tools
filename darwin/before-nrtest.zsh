@@ -58,24 +58,24 @@ if [[ ! -z "$1" ]]
 then
     RELEASE_TAG=$1
 else
+    echo INFO: Checking latest nrtestsuite release tag ...
     LATEST_URL="${NRTESTS_URL}/releases/latest"
     LATEST_URL=${LATEST_URL/"github.com"/"api.github.com/repos"}
     RELEASE_TAG=$( curl --silent "${LATEST_URL}" | grep -o '"tag_name": *"[^"]*"' | grep -o '"[^"]*"$' )
     RELEASE_TAG="${RELEASE_TAG%\"}"
     RELEASE_TAG="${RELEASE_TAG#\"}"
     RELEASE_TAG=${RELEASE_TAG:1}
+    echo INFO: Latest nrtestsuite release: ${RELEASE_TAG}
 fi
 
-# At least until I create tars for unix and darwin
-TEMP_PLATFORM="win64"
 
 # build URLs for test and benchmark files
 if [[ ! -v RELEASE_TAG ]]
 then
   echo "ERROR: tag RELEASE_TAG is invalid" ; return 1
 else
-  TESTFILES_URL="${NRTESTS_URL}/archive/v${RELEASE_TAG}.zip"
-  BENCHFILES_URL="${NRTESTS_URL}/releases/download/v${RELEASE_TAG}/benchmark-${TEMP_PLATFORM}.zip"
+  TESTFILES_URL="${NRTESTS_URL}/archive/v${RELEASE_TAG}.tar.gz"
+  BENCHFILES_URL="${NRTESTS_URL}/releases/download/v${RELEASE_TAG}/benchmark-${PLATFORM}.tar.gz"
 fi
 
 echo INFO: Staging files for regression testing
@@ -107,8 +107,8 @@ tar xzf benchmarks.tar.gz -C benchmark
 MANIFEST_FILE=$( find . -name manifest.json )
 
 while read line; do
-  if [[ $line == *"${TEMP_PLATFORM} "* ]]; then
-    REF_BUILD_ID=${line#*"${TEMP_PLATFORM} "}
+  if [[ $line == *"${PLATFORM} "* ]]; then
+    REF_BUILD_ID=${line#*"${PLATFORM} "}
     REF_BUILD_ID=${REF_BUILD_ID//"\","/""}
   fi
 done < $MANIFEST_FILE

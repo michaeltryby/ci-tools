@@ -63,7 +63,7 @@ if [[ ! -z "$1" ]]
 then
     RELEASE_TAG=$1
 else
-    echo INFO: Checking latest nrtestsuite release tag
+    echo INFO: Checking latest nrtestsuite release tag ...
     LATEST_URL="${NRTESTS_URL}/releases/latest"
     LATEST_URL=${LATEST_URL/"github.com"/"api.github.com/repos"}
     RELEASE_TAG=$( curl --silent "${LATEST_URL}" | grep -o '"tag_name": *"[^"]*"' | grep -o '"[^"]*"$' )
@@ -73,14 +73,12 @@ else
     echo INFO: Latest nrtestsuite release: ${RELEASE_TAG}
 fi
 
-# At least until I create tars for unix and darwin
-TEMP_PLATFORM="win64"
 
 # build URLs for test and benchmark files; need to standardize urls or change into argument
 if [[ ! -z "${RELEASE_TAG}" ]]
   then
     TESTFILES_URL="${NRTESTS_URL}/archive/v${RELEASE_TAG}.zip"
-    BENCHFILES_URL="${NRTESTS_URL}/releases/download/v${RELEASE_TAG}/benchmark-${TEMP_PLATFORM}.zip"
+    BENCHFILES_URL="${NRTESTS_URL}/releases/download/v${RELEASE_TAG}/benchmark-${PLATFORM}.tar.gz"
   else
     echo "ERROR: tag %RELEASE_TAG% is invalid" ; exit 1
 fi
@@ -96,25 +94,25 @@ mkdir ${TEST_HOME}
 cd ${TEST_HOME}
 
 # retrieve swmm-examples for regression testing tar.gz 
-curl -fsSL -o nrtestfiles.zip ${TESTFILES_URL}
+curl -fsSL -o nrtestfiles.tar.gz ${TESTFILES_URL}
 # retrieve swmm benchmark results
-curl -fsSL -o benchmark.zip ${BENCHFILES_URL}
+curl -fsSL -o benchmark.tar.gz ${BENCHFILES_URL}
 
 # extract tests and benchmarks
-tar xzf nrtestfiles.zip
+tar xzf nrtestfiles.tar.gz
 ln -s ${PROJECT}-nrtestsuite-${RELEASE_TAG}/public tests
 
 # create benchmark dir and extract benchmarks
 mkdir benchmark
-tar xzf benchmark.zip -C benchmark
+tar xzf benchmark.tar.gz -C benchmark
 
 #determine ref_build_id
 MANIFEST_FILE=$( find . -name manifest.json )
 echo MANIFEST FILE: $MANIFEST_FILE
 
 while read line; do
-  if [[ $line == *"${TEMP_PLATFORM} "* ]]; then
-    REF_BUILD_ID=${line#*"${TEMP_PLATFORM} "}
+  if [[ $line == *"${PLATFORM} "* ]]; then
+    REF_BUILD_ID=${line#*"${PLATFORM} "}
     REF_BUILD_ID=${REF_BUILD_ID//"\","/""}
   fi
 done < $MANIFEST_FILE

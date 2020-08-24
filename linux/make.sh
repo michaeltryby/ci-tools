@@ -81,7 +81,7 @@ else
     && cp ./${BUILD_HOME}/*.zip ./upload >&1
 fi
 
-export PLATFORM="Linux"
+export PLATFORM="llnux"
 
 #GitHub Actions
 echo ::set-env name=PLATFORM::$PLATFORM
