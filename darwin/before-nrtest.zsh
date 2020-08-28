@@ -58,13 +58,11 @@ if [[ ! -z "$1" ]]
 then
     RELEASE_TAG=$1
 else
-    echo grep --version
     echo INFO: Checking latest nrtestsuite release tag ...
     LATEST_URL="${NRTESTS_URL}/releases/latest"
     LATEST_URL=${LATEST_URL/"github.com"/"api.github.com/repos"}
     echo DOWNLOAD URL: $LATEST_URL
     RELEASE_TAG=$( curl --silent "${LATEST_URL}" | grep -o '"tag_name": *"[^"]*"' | grep -o '"[^"]*"$' )
-    echo INFO: Latest nrtestsuite release: ${RELEASE_TAG}
     RELEASE_TAG="${RELEASE_TAG%\"}"
     RELEASE_TAG="${RELEASE_TAG#\"}"
     RELEASE_TAG=${RELEASE_TAG:1}
