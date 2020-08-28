@@ -105,6 +105,7 @@ tar xzf benchmarks.tar.gz -C benchmark
 
 #determine ref_build_id
 MANIFEST_FILE=$( find . -name manifest.json )
+echo manifest file: $MANIFEST_FILE
 
 while read line; do
   if [[ $line == *"${PLATFORM} "* ]]; then
