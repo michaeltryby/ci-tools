@@ -61,6 +61,7 @@ else
     echo INFO: Checking latest nrtestsuite release tag ...
     LATEST_URL="${NRTESTS_URL}/releases/latest"
     LATEST_URL=${LATEST_URL/"github.com"/"api.github.com/repos"}
+    echo DOWNLOAD URL: $LATEST_URL
     RELEASE_TAG=$( curl --silent "${LATEST_URL}" | grep -o '"tag_name": *"[^"]*"' | grep -o '"[^"]*"$' )
     RELEASE_TAG="${RELEASE_TAG%\"}"
     RELEASE_TAG="${RELEASE_TAG#\"}"
