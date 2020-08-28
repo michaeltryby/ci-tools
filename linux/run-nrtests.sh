@@ -94,12 +94,12 @@ cd ./benchmark
 
 if [ $? -eq 0 ]
 then
+    echo "INFO: nrtest compare exited successfully"
+    mv receipt.json ${PROJ_DIR}/upload/receipt.json
+else
     echo ERROR: nrtest exited with errors
     tar -zcvf benchmark-${PLATFORM}.tar.gz ./${PROJECT}-${SUT_BUILD_ID}
     mv benchmark-${PLATFORM}.tar.gz ${PROJ_DIR}/upload/benchmark-${PLATFORM}.tar.gz
-else
-    echo "INFO: nrtest compare exited successfully"
-    mv receipt.json ./${PROJ_DIR}/upload/receipt.json
 fi
 
 # return user to current dir
