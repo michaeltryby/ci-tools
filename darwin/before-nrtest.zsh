@@ -58,6 +58,7 @@ if [[ ! -z "$1" ]]
 then
   RELEASE_TAG=$1
 else
+  curl --version
   grep --version
   echo ""
   echo INFO: Checking latest nrtestsuite release tag ...
