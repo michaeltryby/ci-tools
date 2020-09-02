@@ -3,10 +3,14 @@
 #
 #  run-nrtests.zsh - Runs numerical regression test
 #
-#  Date Created: 4/1/2020
+#  Date Created: 04/01/2020
+#       Updated: 08/21/2020
 #
 #  Author:       Michael E. Tryby
 #                US EPA - ORD/CESER
+#
+#                Caleb A. Buahin
+#                Xylem Inc.
 #
 #  Dependencies:
 #    python -m pip install -r requirements.txt
@@ -19,7 +23,6 @@
 #    REF_BUILD_ID
 #
 #  Arguments:
-#    1 - (SUT_VERSION)  - optional argument
 #    2 - (SUT_BUILD_ID) - optional argument
 #
 
@@ -31,36 +34,28 @@ for i in ${REQUIRED_VARS}; do
 done
 
 
-# process optional arguments
-if [ ! -z "$1" ]; then
-    SUT_VERSION=$1
-else
-    SUT_VERSION="unknown"
-fi
-
-if [ ! -z "$2" ]; then
-    SUT_BUILD_ID=$2
-else
-    SUT_BUILD_ID="local"
-fi
-
-
 # determine project root directory
-CUR_DIR=${PWD}
 SCRIPT_HOME=${0:a:h}
 cd ${SCRIPT_HOME}/../../
 PROJ_DIR=${PWD}
 
 
 # change current directory to test suite
-cd ${TEST_HOME}
+cd ${PROJ_DIR}/${TEST_HOME}
+
+
+if [ ! -z "$1" ]; then
+    SUT_BUILD_ID=$1
+else
+    SUT_BUILD_ID="local"
+fi
 
 # check if app config file exists
 if [[ ! -a "./apps/${PROJECT}-${SUT_BUILD_ID}.json" ]]
 then
     mkdir -p "apps"
-    ${SCRIPT_HOME}/app-config.zsh "${PROJ_DIR}/${BUILD_HOME}/bin" \
-    ${SUT_BUILD_ID} ${SUT_VERSION} > "./apps/${PROJECT}-${SUT_BUILD_ID}.json"
+    ${SCRIPT_HOME}/app-config.zsh "${PROJ_DIR}/${BUILD_HOME}/bin/Release" \
+    ${PLATFORM} ${SUT_BUILD_ID} > "./apps/${PROJECT}-${SUT_BUILD_ID}.json"
 fi
 
 # build list of directories contaiing tests
@@ -86,6 +81,7 @@ fi
 # perform nrtest execute
 echo "INFO: Creating SUT ${SUT_BUILD_ID} artifacts"
 NRTEST_COMMAND="${NRTEST_EXECUTE_CMD} ${TEST_APP_PATH} ${TESTS} -o ${TEST_OUTPUT_PATH}"
+echo $NRTEST_COMMAND
 eval ${NRTEST_COMMAND}
 
 # perform nrtest compare
@@ -96,14 +92,17 @@ eval ${NRTEST_COMMAND}
 # Stage artifacts for upload
 cd ./benchmark
 
-if [[ $? -eq 0 ]]
+if [ $? -eq 0 ]
 then
+    echo ERROR: nrtest exited with errors
     tar -zcvf benchmark-${PLATFORM}.tar.gz ./${PROJECT}-${SUT_BUILD_ID}
-    mv benchmark-${PLATFORM}.tar.gz ./${PROJ_DIR}/upload/benchmark-${PLATFORM}.tar.gz
+    mv benchmark-${PLATFORM}.tar.gz ${PROJ_DIR}/upload/benchmark-${PLATFORM}.tar.gz
 else
     echo "INFO: nrtest compare exited successfully"
-    mv receipt.json ./${PROJ_DIR}/upload/receipt.json
+    mv receipt.json ${PROJ_DIR}/upload/receipt.json
 fi
 
 # return user to current dir
-cd ${CUR_DIR}
+cd ${PROJ_DIR}
+
+return $?

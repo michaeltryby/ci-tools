@@ -36,7 +36,6 @@ for %%v in (PROJECT BUILD_HOME TEST_HOME PLATFORM REF_BUILD_ID) do (
 
 
 :: determine project directory
-set "CUR_DIR=%CD%"
 set "SCRIPT_HOME=%~dp0"
 cd %SCRIPT_HOME%
 pushd ..
@@ -99,30 +98,30 @@ if exist %TEST_OUTPUT_PATH% (
 
 :: perform nrtest execute
 echo INFO: Creating SUT %SUT_BUILD_ID% artifacts
-set NRTEST_COMMAND=%NRTEST_EXECUTE_CMD% %TEST_APP_PATH% %TESTS% -o %TEST_OUTPUT_PATH%
-:: if there is an error exit the script with error value 1
-%NRTEST_COMMAND% || exit /B 1
+%NRTEST_EXECUTE_CMD% %TEST_APP_PATH% %TESTS% -o %TEST_OUTPUT_PATH%
+set RESULT=%ERRORLEVEL%
 
 echo.
 
 :: perform nrtest compare
-echo INFO: Comparing SUT artifacts to REF %REF_BUILD_ID%
-set NRTEST_COMMAND=%NRTEST_COMPARE_CMD% %TEST_OUTPUT_PATH% %REF_OUTPUT_PATH% --rtol %RTOL_VALUE% --atol %ATOL_VALUE% -o benchmark\receipt.json
-%NRTEST_COMMAND%
+if %RESULT% equ 0 (
+  echo INFO: Comparing SUT artifacts to REF %REF_BUILD_ID%
+  %NRTEST_COMPARE_CMD% %TEST_OUTPUT_PATH% %REF_OUTPUT_PATH% --rtol %RTOL_VALUE% --atol %ATOL_VALUE% -o benchmark\receipt.json
+  set RESULT=%ERRORLEVEL%
+)
 
-set RESULT=%ERRORLEVEL%
 cd .\benchmark
 
 :: stage artifacts for upload
 if %RESULT% neq 0 (
-  echo ERROR: nrtest compare exited with errors
+  echo ERROR: nrtest exited with errors
   7z a benchmark-%PLATFORM%.zip .\%PROJECT%-%SUT_BUILD_ID% > nul
   move /Y benchmark-%PLATFORM%.zip %PROJ_DIR%\upload > nul
 ) else (
-  echo INFO: nrtest compare exited successfully
+  echo INFO: nrtest exited successfully
   move /Y receipt.json %PROJ_DIR%\upload > nul
 )
 
 :: return user to their current dir and exit
-cd %CUR_DIR%
+cd %PROJ_DIR%
 exit /B %RESULT%

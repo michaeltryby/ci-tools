@@ -15,8 +15,8 @@
 ::      https://cmake.org/download/
 ::
 ::  Optional Arguments:
-::    /g ("GENERATOR") defaults to "Visual Studio 15 2017"
-::    /t builds and runs unit tests (requires Boost)
+::    -g ("GENERATOR") defaults to "Visual Studio 15 2017"
+::    -t builds and runs unit tests (requires Boost)
 ::
 
 
@@ -29,7 +29,6 @@ set "PLATFORM=win32"
 
 
 :: determine project directory
-set "CUR_DIR=%CD%"
 set "SCRIPT_HOME=%~dp0"
 cd %SCRIPT_HOME%
 pushd ..
@@ -58,7 +57,7 @@ if not defined PROJECT (
 )
 
 :: GitHub Actions
-echo ::set-env name=PROJECT::%PROJECT%
+echo::set-env name=PROJECT::%PROJECT%
 
 
 setlocal EnableDelayedExpansion
@@ -74,11 +73,11 @@ set "TESTING=0"
 :: process arguments
 :loop
 if NOT [%1]==[] (
-  if "%1"=="/g" (
+  if "%1"=="-g" (
     set "GENERATOR=%~2"
     shift
   )
-  if "%1"=="/t" (
+  if "%1"=="-t" (
     set "TESTING=1"
   )
   shift
@@ -127,5 +126,5 @@ if not defined PLATFORM ( echo "ERROR: PLATFORM could not be determined" & exit 
 echo ::set-env name=PLATFORM::%PLATFORM%
 
 
-:: return to users current dir
-cd %CUR_DIR%
+:: return to users to project directory
+cd %PROJ_DIR%

@@ -15,7 +15,7 @@
 ::    PROJECT
 ::    BUILD_HOME - defaults to "build"
 ::    PLATFORM
-::
+::    NRTESTS_URL - URL to set the test suite defaults to "https://github.com/OpenWaterAnalytics/%PROJECT%-nrtestsuite"
 ::  Arguments:
 ::    1 - (RELEASE_TAG) release tag for benchmark version (defaults to latest tag)
 ::
@@ -31,11 +31,11 @@
 set "TEST_HOME=nrtests"
 
 :: determine project directory
-set "CUR_DIR=%CD%"
 set "SCRIPT_HOME=%~dp0"
 cd %SCRIPT_HOME%
 pushd ..
 pushd ..
+set "PROJECT_DIR=%CD%"
 
 setlocal
 
@@ -48,8 +48,9 @@ for %%d in (curl 7z) do (
 
 
 :: set URL to github repo with test files
-set "NRTESTS_URL=https://github.com/%PROJECT%-Project/%PROJECT%-nrtestsuite"
-
+if not defined NRTESTS_URL (
+  set NRTESTS_URL="https://github.com/OpenWaterAnalytics/%PROJECT%-nrtestsuite"
+)
 
 :: if release tag isn't provided latest tag will be retrieved
 if [%1] == [] (set "RELEASE_TAG="
@@ -118,4 +119,4 @@ echo ::set-env name=REF_BUILD_ID::%REF_BUILD_ID%
 
 
 :: return to users current directory
-cd %CUR_DIR%
+cd %PROJECT_DIR%

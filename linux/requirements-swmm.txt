@@ -4,6 +4,9 @@
 # Date Created: 3/15/2018
 # Author: Michael E. Tryby
 #         US EPA ORD/NRMRL
+#         
+#         Caleb A. Buahin
+#         Xylem Inc.
 # 
 # Useful for configuring a python environment to run swmm-nrtestsuite. 
 #
@@ -11,8 +14,10 @@
 #
 
 
-nrtest>=0.2.3
+nrtest
 
--f https://github.com/OpenWaterAnalytics/swmm-python/releases/download/v0.1.0-alpha/swmm_output-0.1.0a0-cp27-cp27m-win32.whl
+-f https://github.com/SWMM-Project/swmm-python/releases/download/v0.6.0-rc.1/swmm_toolkit-0.5.0-cp37-cp37m-linux_x86_64.whl
+swmm-toolkit
 
--e ./tools/nrtest-swmm
+-f https://github.com/SWMM-Project/swmm-python/releases/download/v0.6.0-rc.1/nrtest_swmm-0.6.0-py3-none-any.whl
+nrtest-swmm
