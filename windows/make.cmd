@@ -49,11 +49,12 @@ if not exist upload (
 
 :: determine project
 if not defined PROJECT (
-  for %%i in (%PROJ_DIR%) do set PROJECT=%%~ni
-  set PROJECT=%PROJECT:~0,-7%
-  if not defined PROJECT (
-    echo "ERROR: PROJECT could not be determined" & exit /B 1
+  for %%i in (%PROJ_DIR%) do (
+    if "%%~ni" == "swmm-solver" ( set "PROJECT=swmm" ) else if "%%~ni" == "epanet-solver" ( set "PROJECT=epanet" )
   )
+)
+if not defined PROJECT (
+  echo "ERROR: PROJECT could not be determined" & exit /B 1
 )
 
 :: GitHub Actions
