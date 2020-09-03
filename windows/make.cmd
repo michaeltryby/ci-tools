@@ -50,7 +50,9 @@ if not exist upload (
 :: determine project
 if not defined PROJECT (
   for %%i in (%PROJ_DIR%) do (
-    if "%%~ni" == "swmm-solver" ( set "PROJECT=swmm" ) else if "%%~ni" == "epanet-solver" ( set "PROJECT=epanet" )
+    if "%%~ni" == "swmm-solver" ( set "PROJECT=swmm"
+    ) else if "%%~ni" == "epanet-solver" ( set "PROJECT=epanet"
+    ) else ( set "PROJECT=" )
   )
 )
 if not defined PROJECT (
