@@ -98,17 +98,17 @@ if exist %BUILD_HOME% (
 :: perform the build
 cmake -E make_directory %BUILD_HOME%
 
-set RESULT=%ERRORLEVEL%
+set RESULT=!ERRORLEVEL!
 
 if %TESTING% equ 1 (
   cmake -E chdir .\%BUILD_HOME% cmake -G"%GENERATOR%" -DBUILD_TESTS=ON ..^
   && cmake --build .\%BUILD_HOME% --config Debug^
   & echo. && cmake -E chdir .\%BUILD_HOME% ctest -C Debug --output-on-failure
-  set RESULT=%ERRORLEVEL%
+  set RESULT=!ERRORLEVEL!
 ) else (
   cmake -E chdir .\%BUILD_HOME% cmake -G"%GENERATOR%" -DBUILD_TESTS=OFF ..^
   && cmake --build .\%BUILD_HOME% --config Release --target package
-  set RESULT=%ERRORLEVEL%
+  set RESULT=!ERRORLEVEL!
   move /Y .\%BUILD_HOME%\*.zip .\upload > nul
 )
 
