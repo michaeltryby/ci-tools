@@ -74,16 +74,20 @@ set -- "${POSITIONAL[@]}" # restore positional parameters
 # perform the build
 cmake -E make_directory ${BUILD_HOME}
 
+RESULT=$?
+
 if [ ${TESTING} -eq 1 ]; 
 then
     cmake -E chdir ./${BUILD_HOME} cmake -G "${GENERATOR}" -DBUILD_TESTS=ON .. \
     && cmake --build ./${BUILD_HOME}  --config Debug \
     && cmake -E chdir ./${BUILD_HOME}  ctest -C Debug --output-on-failure
+    RESULT=$?
 
 else
     cmake -E chdir ./${BUILD_HOME} cmake -G "${GENERATOR}" -DBUILD_TESTS=OFF .. \
-    && cmake --build ./${BUILD_HOME} --config Release --target package \
-    && cp ./${BUILD_HOME}/*.tar.gz ./upload >&1
+    && cmake --build ./${BUILD_HOME} --config Release --target package
+    RESULT=$?
+    cp ./${BUILD_HOME}/*.tar.gz ./upload >&1
 fi
 
 #GitHub Actions
@@ -91,3 +95,5 @@ echo ::set-env name=PLATFORM::$PLATFORM
 
 # return user to current dir
 cd ${PROJECT_DIR}
+
+exit $RESULT

@@ -83,26 +83,31 @@ echo "INFO: Creating SUT ${SUT_BUILD_ID} artifacts"
 NRTEST_COMMAND="${NRTEST_EXECUTE_CMD} ${TEST_APP_PATH} ${TESTS} -o ${TEST_OUTPUT_PATH}"
 echo $NRTEST_COMMAND
 eval ${NRTEST_COMMAND}
+RESULT=$?
 
+if [[ "$RESULT" -eq 0 ]]
+then
 # perform nrtest compare
 echo "INFO: Comparing SUT artifacts to REF ${REF_BUILD_ID}"
 NRTEST_COMMAND="${NRTEST_COMPARE_CMD} ${TEST_OUTPUT_PATH} ${REF_OUTPUT_PATH} --rtol ${RTOL_VALUE} --atol ${ATOL_VALUE}"
 eval ${NRTEST_COMMAND}
+RESULT=$?
+fi
 
 # Stage artifacts for upload
 cd ./benchmark
 
-if [ $? -eq 0 ]
+if [[ "$RESULT" -eq 0 ]]
 then
+    echo "INFO: nrtest compare exited successfully"
+    mv receipt.json ${PROJ_DIR}/upload/receipt.json
+else
     echo ERROR: nrtest exited with errors
     tar -zcvf benchmark-${PLATFORM}.tar.gz ./${PROJECT}-${SUT_BUILD_ID}
     mv benchmark-${PLATFORM}.tar.gz ${PROJ_DIR}/upload/benchmark-${PLATFORM}.tar.gz
-else
-    echo "INFO: nrtest compare exited successfully"
-    mv receipt.json ${PROJ_DIR}/upload/receipt.json
 fi
 
 # return user to current dir
 cd ${PROJ_DIR}
 
-return $?
+return $RESULT
