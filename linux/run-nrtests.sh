@@ -84,7 +84,7 @@ NRTEST_COMMAND="${NRTEST_EXECUTE_CMD} ${TEST_APP_PATH} ${TESTS} -o ${TEST_OUTPUT
 eval ${NRTEST_COMMAND}
 RESULT=$?
 
-if [[ "$RESULT" -neq 0 ]]
+if [[ "$RESULT" -ne 0 ]]
 then
     echo "ERROR: nrtest execute exited with errors"
 fi

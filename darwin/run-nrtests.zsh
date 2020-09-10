@@ -85,7 +85,7 @@ echo $NRTEST_COMMAND
 eval ${NRTEST_COMMAND}
 RESULT=$?
 
-if [[ "$RESULT" -neq 0 ]]
+if [[ "$RESULT" -ne 0 ]]
 then
     echo "ERROR: nrtest execute exited with errors"
 fi
