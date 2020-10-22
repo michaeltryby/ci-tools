@@ -28,20 +28,21 @@
 
 
 # check that env variables are set
-REQUIRED_VARS=('PROJECT' 'BUILD_HOME' 'TEST_HOME' 'PLATFORM' 'REF_BUILD_ID')
+REQUIRED_VARS=(PROJECT BUILD_HOME TEST_HOME PLATFORM REF_BUILD_ID)
 for i in ${REQUIRED_VARS}; do
-    [[ -v "${${(P)i}}" ]] && { echo "ERROR: $i must be defined"; return 1 }
+    [[ ! -v ${i} ]] && { echo "ERROR: ${i} must be defined"; return 1 }
 done
 
 
 # determine project root directory
+CUR_DIR=${PWD}
 SCRIPT_HOME=${0:a:h}
 cd ${SCRIPT_HOME}/../../
 PROJ_DIR=${PWD}
 
 
 # change current directory to test suite
-cd ${PROJ_DIR}/${TEST_HOME}
+cd ${TEST_HOME}
 
 
 if [ ! -z "$1" ]; then
@@ -105,11 +106,11 @@ then
     mv receipt.json ${PROJ_DIR}/upload/receipt.json
 else
     echo "ERROR: nrtest exited with errors"
-    tar -zcvf benchmark-${PLATFORM}.tar.gz ./${PROJECT}-${SUT_BUILD_ID}
+    tar -zcf benchmark-${PLATFORM}.tar.gz ./${PROJECT}-${SUT_BUILD_ID}
     mv benchmark-${PLATFORM}.tar.gz ${PROJ_DIR}/upload/benchmark-${PLATFORM}.tar.gz
 fi
 
 # return user to current dir
-cd ${PROJ_DIR}
+cd ${CUR_DIR}
 
 return $RESULT
