@@ -8,33 +8,44 @@
 #
 #  Authors:      Michael E. Tryby
 #                US EPA - ORD/NRMRL
-#                
+#
 #                Caleb A. Buahin
 #                Xylem Inc.
 #
 #  Environment Variables:
 #    PROJECT
-#  
+#
 #  Optional Arguments:
 #    -g ("GENERATOR") defaults to "Ninja"
 #    -t builds and runs unit tests (requires Boost)
 
 
-# Check to make sure PROJECT is defined
-[[ ! -v PROJECT ]] && { echo "ERROR: PROJECT must be defined"; return 1 }
+setopt extendedglob
 
 export BUILD_HOME="build"
 
 # determine project directory
+CUR_DIR=${PWD}
 SCRIPT_HOME=${0:a:h}
-cd ${SCRIPT_HOME} 
+cd ${SCRIPT_HOME}
 cd ./../../
 PROJECT_DIR=${PWD}
+
+
+# determine project
+if [[ ! -v PROJECT ]]
+then
+[[ $( basename $PROJECT_DIR ) = ((#i)'STO'*|(#i)'SWM'*) ]] && { export PROJECT="swmm" }
+[[ $( basename $PROJECT_DIR ) = ((#i)'WAT'*|(#i)'EPA'*) ]] && { export PROJECT="epanet" }
+fi
+# check that PROJECT is defined
+[[ ! -v PROJECT ]] && { echo "ERROR: PROJECT must be defined"; return 1 }
+
 
 # prepare for artifact upload
 if [ ! -d upload ]; then
     mkdir upload
-fi 
+fi
 
 echo INFO: Building ${PROJECT}  ...
 
@@ -70,7 +81,7 @@ cmake -E make_directory ${BUILD_HOME}
 
 RESULT=$?
 
-if [ ${TESTING} -eq 1 ]; 
+if [ ${TESTING} -eq 1 ];
 then
     echo "Building debug"
     cmake -E chdir ./${BUILD_HOME} cmake -G "${GENERATOR}" -DBUILD_TESTS=ON .. \
@@ -91,7 +102,7 @@ export PLATFORM="darwin"
 echo ::set-env name=PLATFORM::$PLATFORM
 
 # return user to current dir
-cd ${PROJECT_DIR}
+cd ${CUR_DIR}
 
 
 return $RESULT

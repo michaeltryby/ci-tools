@@ -7,7 +7,7 @@
 #
 #  Author:       Michael E. Tryby
 #                US EPA - ORD/NRMRL
-#                
+#
 #                Caleb A. Buahin
 #                Xylem Inc.
 #
@@ -24,11 +24,11 @@
 #  Arguments:
 #    1 - (RELEASE_TAG)  - Release tag
 #
-#  Note: 
+#  Note:
 #    Tests and benchmark files are stored in the swmm-example-networks repo.
-#    This script retreives them using a stable URL associated with a release on 
-#    GitHub and stages the files for nrtest to run. The script assumes that 
-#    before-test.sh and app-config.sh are located together in the same folder. 
+#    This script retreives them using a stable URL associated with a release on
+#    GitHub and stages the files for nrtest to run. The script assumes that
+#    before-test.sh and app-config.sh are located together in the same folder.
 #
 
 export TEST_HOME="nrtests"
@@ -36,10 +36,11 @@ export TEST_HOME="nrtests"
 # check that env variables are set
 REQUIRED_VARS=('PROJECT' 'BUILD_HOME' 'PLATFORM')
 for i in ${REQUIRED_VARS}; do
-    [[ -v "${${(P)i}}" ]] && { echo "ERROR: $i must be defined"; return 1 }
+    [[ ! -v ${i} ]] && { echo "ERROR: $i must be defined"; return 1 }
 done
 
 # determine project directory
+CUR_DIR=${PWD}
 SCRIPT_HOME=${0:a:h}
 cd ${SCRIPT_HOME}
 cd ./../../
@@ -58,16 +59,8 @@ if [[ ! -z "$1" ]]
 then
   RELEASE_TAG=$1
 else
-  grep --version
-  echo ""
-  echo INFO: Checking latest nrtestsuite release tag ...
   LATEST_URL="${NRTESTS_URL}/releases/latest"
-  LATEST_URL=${LATEST_URL/"github.com"/"api.github.com/repos"}
-  echo DOWNLOAD URL: $LATEST_URL
-  RELEASE_TAG=$( curl --silent "${LATEST_URL}" | grep -o '"tag_name": *"[^"]*"' | grep -o '"[^"]*"$' )
-  RELEASE_TAG="${RELEASE_TAG%\"}"
-  RELEASE_TAG="${RELEASE_TAG#\"}"
-  RELEASE_TAG=${RELEASE_TAG:1}
+  RELEASE_TAG=$( basename $( curl -Ls -o /dev/null -w %{url_effective} ${LATEST_URL} ) )
   echo INFO: Latest nrtestsuite release: ${RELEASE_TAG}
 fi
 
@@ -77,8 +70,8 @@ if [[ ! -v RELEASE_TAG ]]
 then
   echo "ERROR: tag RELEASE_TAG is invalid" ; return 1
 else
-  TESTFILES_URL="${NRTESTS_URL}/archive/v${RELEASE_TAG}.tar.gz"
-  BENCHFILES_URL="${NRTESTS_URL}/releases/download/v${RELEASE_TAG}/benchmark-${PLATFORM}.tar.gz"
+  TESTFILES_URL="${NRTESTS_URL}/archive/${RELEASE_TAG}.tar.gz"
+  BENCHFILES_URL="${NRTESTS_URL}/releases/download/${RELEASE_TAG}/benchmark-${PLATFORM}.tar.gz"
 fi
 
 echo INFO: Staging files for regression testing
@@ -98,7 +91,7 @@ curl -fsSL -o benchmarks.tar.gz ${BENCHFILES_URL}
 
 # extract tests and setup symlink
 tar xzf nrtestfiles.tar.gz
-ln -s ${PROJECT}-nrtestsuite-${RELEASE_TAG}/public tests
+ln -s ${PROJECT}-nrtestsuite-${RELEASE_TAG:1}/public tests
 
 
 # create benchmark dir and extract benchmarks
@@ -128,4 +121,4 @@ export REF_BUILD_ID=$REF_BUILD_ID
 echo ::set-env name=REF_BUILD_ID::$REF_BUILD_ID
 
 # return user to current dir
-cd ${PROJECT_DIR}
+cd ${CUR_DIR}
