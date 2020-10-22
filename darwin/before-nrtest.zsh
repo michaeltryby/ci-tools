@@ -34,7 +34,7 @@
 export TEST_HOME="nrtests"
 
 # check that env variables are set
-REQUIRED_VARS=('PROJECT' 'BUILD_HOME' 'PLATFORM')
+REQUIRED_VARS=(PROJECT BUILD_HOME PLATFORM)
 for i in ${REQUIRED_VARS}; do
     [[ ! -v ${i} ]] && { echo "ERROR: $i must be defined"; return 1 }
 done
