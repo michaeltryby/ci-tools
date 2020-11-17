@@ -16,6 +16,7 @@
 ::    BUILD_HOME - defaults to "build"
 ::    PLATFORM
 ::    NRTESTS_URL - URL to set the test suite defaults to "https://github.com/OpenWaterAnalytics/%PROJECT%-nrtestsuite"
+::
 ::  Arguments:
 ::    1 - (RELEASE_TAG) release tag for benchmark version (defaults to latest tag)
 ::
