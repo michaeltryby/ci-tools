@@ -60,7 +60,7 @@ if not defined PROJECT (
 )
 
 :: GitHub Actions
-echo "PROJECT=%PROJECT%" > %GITHUB_ENV%
+echo "set PROJECT=%PROJECT%" > %GITHUB_ENV%
 
 
 setlocal EnableDelayedExpansion
@@ -129,7 +129,7 @@ if not defined PLATFORM ( echo "ERROR: PLATFORM could not be determined" & exit 
 
 
 :: GitHub Actions
-echo "PLATFORM=%PLATFORM%" > %GITHUB_ENV%
+echo "set PLATFORM=%PLATFORM%" >> %GITHUB_ENV%
 
 :: return to users to project directory
 cd %PROJ_DIR%
