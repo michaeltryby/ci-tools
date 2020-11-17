@@ -91,7 +91,7 @@ else
 fi
 
 #GitHub Actions
-echo ::set-env name=PLATFORM::$PLATFORM
+echo "PLATFORM=$PLATFORM" >> $GITHUB_ENV
 
 # return user to current dir
 cd ${PROJECT_DIR}
