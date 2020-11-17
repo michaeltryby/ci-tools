@@ -99,7 +99,7 @@ fi
 export PLATFORM="darwin"
 
 #GitHub Actions
-echo ::set-env name=PLATFORM::$PLATFORM
+echo "PLATFORM=$PLATFORM" >> $GITHUB_ENV
 
 # return user to current dir
 cd ${CUR_DIR}

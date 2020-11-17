@@ -57,7 +57,7 @@ if not defined PROJECT (
 )
 
 :: GitHub Actions
-echo::set-env name=PROJECT::%PROJECT%
+echo "PROJECT=%PROJECT%" >> %GITHUB_ENV%
 
 
 setlocal EnableDelayedExpansion
@@ -103,7 +103,7 @@ set RESULT=!ERRORLEVEL!
 if %TESTING% equ 1 (
   cmake -E chdir .\%BUILD_HOME% cmake -G"%GENERATOR%" -DBUILD_TESTS=ON ..^
   && cmake --build .\%BUILD_HOME% --config Debug^
-  & echo. && cmake -E chdir .\%BUILD_HOME% ctest -C Debug --output-on-failure
+  && cmake -E chdir .\%BUILD_HOME% ctest -C Debug --output-on-failure
   set RESULT=!ERRORLEVEL!
 ) else (
   cmake -E chdir .\%BUILD_HOME% cmake -G"%GENERATOR%" -DBUILD_TESTS=OFF ..^
@@ -126,7 +126,7 @@ if not defined PLATFORM ( echo "ERROR: PLATFORM could not be determined" & exit 
 
 
 :: GitHub Actions
-echo ::set-env name=PLATFORM::%PLATFORM%
+echo "PLATFORM=%PLATFORM%" >> %GITHUB_ENV%
 
 
 :: return to users to project directory

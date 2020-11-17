@@ -127,7 +127,7 @@ fi
 export REF_BUILD_ID=$REF_BUILD_ID
 
 # GitHub Actions
-echo ::set-env name=REF_BUILD_ID::$REF_BUILD_ID
+echo "REF_BUILD_ID=$REF_BUILD_ID" >> $GITHUB_ENV
 
 # return user to current dir
 cd ${PROJECT_DIR}
