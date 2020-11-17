@@ -129,8 +129,9 @@ if not defined PLATFORM ( echo "ERROR: PLATFORM could not be determined" & exit 
 
 
 :: GitHub Actions
+echo "PLATFORM=%PLATFORM%"
 echo "PLATFORM=%PLATFORM%" >> %GITHUB_ENV%
-
+echo  %GITHUB_ENV%
 :: return to users to project directory
 cd %PROJ_DIR%
 

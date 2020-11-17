@@ -57,6 +57,7 @@ if not defined NRTESTS_URL (
 if [%1] == [] (set "RELEASE_TAG="
 ) else (set "RELEASE_TAG=%~1")
 
+echo "testing:%GITHUB_ENV%"
 
 :: check env variables and apply defaults
 for %%v in (PROJECT BUILD_HOME PLATFORM) do (
