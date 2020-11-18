@@ -74,8 +74,8 @@ if [%RELEASE_TAG%] == [] (
 )
 
 if defined RELEASE_TAG (
-  set "TESTFILES_URL=%NRTESTS_URL%/archive/%RELEASE_TAG%.zip"
-  set "BENCHFILES_URL=%NRTESTS_URL%/releases/download/%RELEASE_TAG%/benchmark-%PLATFORM%.zip"
+  set TESTFILES_URL=%NRTESTS_URL%/archive/%RELEASE_TAG%.zip
+  set BENCHFILES_URL=%NRTESTS_URL%/releases/download/%RELEASE_TAG%/benchmark-%PLATFORM%.zip
 ) else (
   echo ERROR: tag %RELEASE_TAG% is invalid & exit /B 1
 )
@@ -92,7 +92,9 @@ if %ERRORLEVEL% NEQ 0 ( echo "ERROR: unable to cd %TEST_HOME% dir" & exit /B 1 )
 
 
 :: retrieve nrtest cases and benchmark results for regression testing
+echo Downloading %TESTFILES_URL%
 curl -fsSL -o nrtestfiles.zip %TESTFILES_URL%
+echo Downloading %BENCHFILES_URL%
 curl -fsSL -o benchmark.zip %BENCHFILES_URL%
 
 
