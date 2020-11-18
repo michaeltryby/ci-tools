@@ -116,7 +116,7 @@ for /F delims^=^"^ tokens^=4 %%d in ( 'findstr %PLATFORM% %TEST_HOME%\manifest.j
 if not defined REF_BUILD_ID ( echo "ERROR: REF_BUILD_ID could not be determined" & exit /B 1 )
 
 :: GitHub Actions
-echo "REF_BUILD_ID=%REF_BUILD_ID%" >> %GITHUB_ENV%
+echo REF_BUILD_ID=%REF_BUILD_ID%  >> %GITHUB_ENV%
 
 
 :: return to users current directory
