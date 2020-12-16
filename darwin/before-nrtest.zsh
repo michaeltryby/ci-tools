@@ -5,11 +5,7 @@
 #  Date Created: 11/15/2017
 #       Updated: 08/21/2020
 #
-#  Author:       Michael E. Tryby
-#                US EPA - ORD/NRMRL
-#
-#                Caleb A. Buahin
-#                Xylem Inc.
+#  Author:       See AUTHORS
 #
 #  Dependencies:
 #    curl

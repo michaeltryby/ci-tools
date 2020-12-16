@@ -4,8 +4,7 @@
 ::  Date Created: 10/16/2019
 ::  Date Modified: 10/17/2019
 ::
-::  Author: Michael E. Tryby
-::          US EPA - ORD/CESER
+::  Author: See AUTHORS
 ::
 ::  Requires:
 ::    git

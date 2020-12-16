@@ -6,11 +6,7 @@
 #  Date Created: 06/29/2020
 #  Date Modified: 07/06/2020
 #
-#  Authors:      Michael E. Tryby
-#                US EPA - ORD/NRMRL
-#                
-#                Caleb A. Buahin
-#                Xylem Inc.
+#  Authors:      See AUTHORS
 #
 #  Environment Variables:
 #    PROJECT name for project
@@ -23,8 +19,8 @@
 # Check to make sure PROJECT is defined
 if [[ -z "${PROJECT}" ]]; then
     echo "ERROR: PROJECT could not be determined"
-    exit 1 
-else 
+    exit 1
+else
     echo INFO: Building ${PROJECT}  ...
 fi
 
@@ -41,7 +37,7 @@ PROJECT_DIR=${PWD}
 # prepare for artifact upload
 if [ ! -d upload ]; then
     mkdir upload
-fi 
+fi
 
 echo INFO: Building ${PROJECT}  ...
 
@@ -76,7 +72,7 @@ cmake -E make_directory ${BUILD_HOME}
 
 RESULT=$?
 
-if [ ${TESTING} -eq 1 ]; 
+if [ ${TESTING} -eq 1 ];
 then
     cmake -E chdir ./${BUILD_HOME} cmake -G "${GENERATOR}" -DBUILD_TESTS=ON .. \
     && cmake --build ./${BUILD_HOME}  --config Debug \

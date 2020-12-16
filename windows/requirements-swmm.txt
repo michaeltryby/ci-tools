@@ -4,8 +4,7 @@
 # Created:  Jun 3, 2020
 # Updated:
 #
-# Author: Michael E. Tryby
-#         US EPA ORD/CESER
+# Author: See AUTHORS
 #
 # Useful for configuring a python environment to run nrtests on swmm.
 #

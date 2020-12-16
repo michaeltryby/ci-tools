@@ -4,11 +4,7 @@
 # Date Created:  10/17/2019
 # Date Updated:  11/26/2019
 #
-# Author: Michael E. Tryby
-#         US EPA ORD/CESER
-#         
-#         Caleb A. Buahin
-#         Xylem Inc.
+# Author: See AUTHORS
 #
 # Useful for configuring a python environment to run nrtests on swmm.
 #

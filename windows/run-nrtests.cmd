@@ -4,8 +4,7 @@
 ::  Created: Oct 16, 2019
 ::  Updated: Jun 2, 2020
 ::
-::  Author: Michael E. Tryby
-::          US EPA - ORD/CESER
+::  Author: See AUTHORS
 ::
 ::  Dependencies:
 ::    python -m pip install -r requirements.txt

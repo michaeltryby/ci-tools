@@ -6,25 +6,21 @@
 #  Date Created: 11/15/2017
 #       Updated: 08/21/2020
 #
-#  Authors:      Michael E. Tryby
-#                US EPA - ORD/NRMRL
-#                
-#                Caleb A. Buahin
-#                Xylem Inc.
+#  Authors:      See AUTHORS
 #
 #  Requires:
 #    git
 #
 #  Environment Variables:
 #    PROJECT
-#                  
+#
 #  Arguments:
 #    1 - absolute path to test executable
 #    2 - Platform
 #    3 - build identifier for SUT
 #
 
-# Check requirements 
+# Check requirements
 type git >/dev/null 2>&1 || { echo "ERROR: git not installed"; exit 1; }
 
 

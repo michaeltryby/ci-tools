@@ -1,14 +1,10 @@
 #
-# requirements-appveyor.txt 
-# 
+# requirements-appveyor.txt
+#
 # Date Created: 3/15/2018
-# Author: Michael E. Tryby
-#         US EPA ORD/NRMRL
-#         
-#         Caleb A. Buahin
-#         Xylem Inc.
-# 
-# Useful for configuring a python environment to run swmm-nrtestsuite. 
+# Author: See AUTHORS
+#
+# Useful for configuring a python environment to run swmm-nrtestsuite.
 #
 # command: pip install -r tools/requirements-appveyor.txt
 #

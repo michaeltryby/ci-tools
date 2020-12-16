@@ -6,11 +6,7 @@
 #  Date Created: 06/29/2020
 #       Updated: 08/21/2020
 #
-#  Authors:      Michael E. Tryby
-#                US EPA - ORD/NRMRL
-#
-#                Caleb A. Buahin
-#                Xylem Inc.
+#  Authors:      See AUTHORS
 #
 #  Environment Variables:
 #    PROJECT

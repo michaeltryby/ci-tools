@@ -6,11 +6,7 @@
 #  Date Created: 04/01/2020
 #       Updated: 08/21/2020
 #
-#  Author:       Michael E. Tryby
-#                US EPA - ORD/CESER
-#
-#                Caleb A. Buahin
-#                Xylem Inc.
+#  Author:       See AUTHORS
 #
 #  Dependencies:
 #    python -m pip install -r requirements.txt

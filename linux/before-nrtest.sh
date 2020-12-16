@@ -1,14 +1,10 @@
 #! /bin/bash
-# 
+#
 #  before-test.sh - Prepares Travis CI worker to run swmm regression tests
 #
 #  Date Created: 04/05/2018
 #
-#  Authors:      Michael E. Tryby
-#                US EPA - ORD/NRMRL
-#
-#                Caleb A. Buahin
-#                Xylem Inc.
+#  Authors:      See AUTHORS
 #
 #  Dependencies:
 #    curl
@@ -23,11 +19,11 @@
 #  Arguments:
 #    1 - (RELEASE_TAG)  - Release tag
 #
-#  Note: 
+#  Note:
 #    Tests and benchmark files are stored in the swmm-example-networks repo.
-#    This script retreives them using a stable URL associated with a release on 
-#    GitHub and stages the files for nrtest to run. The script assumes that 
-#    before-test.sh and app-config.sh are located together in the same folder. 
+#    This script retreives them using a stable URL associated with a release on
+#    GitHub and stages the files for nrtest to run. The script assumes that
+#    before-test.sh and app-config.sh are located together in the same folder.
 
 
 export TEST_HOME="nrtests"
@@ -38,7 +34,7 @@ REQUIRED_VARS=('PROJECT' 'BUILD_HOME' 'PLATFORM')
 for i in ${REQUIRED_VARS[@]}
 do
     if [[ -z "${i}" ]]; then
-      echo "ERROR: $i must be defined"; exit 1; 
+      echo "ERROR: $i must be defined"; exit 1;
     fi
 done
 
@@ -94,7 +90,7 @@ mkdir ${TEST_HOME}
 cd ${TEST_HOME}
 
 
-# retrieve swmm-examples for regression testing tar.gz 
+# retrieve swmm-examples for regression testing tar.gz
 curl -fsSL -o nrtestfiles.tar.gz ${TESTFILES_URL}
 
 # retrieve swmm benchmark results
@@ -131,5 +127,3 @@ echo "REF_BUILD_ID=$REF_BUILD_ID" >> $GITHUB_ENV
 
 # return user to current dir
 cd ${PROJECT_DIR}
-
-

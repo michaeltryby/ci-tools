@@ -4,11 +4,7 @@
 #
 #  Date Created: 11/15/2017
 #
-#  Author:       Michael E. Tryby
-#                US EPA - ORD/NRMRL
-#                
-#                Caleb A. Buahin
-#                Xylem Inc.
+#  Author:       See AUTHORS
 #
 #  Dependencies:
 #    python -m pip install -r requirements.txt
@@ -28,7 +24,7 @@ REQUIRED_VARS=('PROJECT' 'BUILD_HOME' 'TEST_HOME' 'PLATFORM' 'REF_BUILD_ID')
 for i in ${REQUIRED_VARS[@]}
 do
     if [[ -z "${i}" ]]; then
-      echo "ERROR: $i must be defined"; exit 1; 
+      echo "ERROR: $i must be defined"; exit 1;
     fi
 done
 
