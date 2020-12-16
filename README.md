@@ -5,8 +5,7 @@
    Created: May 3, 2020
    Updated:
 
-   Author: Michael E. Tryby
-           US EPA - ORD/CESER
+   Author: See AUTHORS
 --->
 
 # ci-tools
