@@ -9,6 +9,7 @@
 # command: pip install -r tools/requirements-appveyor.txt
 #
 
+aenum==2.2.6
 
 nrtest
 
