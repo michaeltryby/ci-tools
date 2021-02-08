@@ -75,11 +75,11 @@ set "TESTING=0"
 :: process arguments
 :loop
 if NOT [%1]==[] (
-  if "%1"=="-g" (
+  if "%1"=="/g" (
     set "GENERATOR=%~2"
     shift
   )
-  if "%1"=="-t" (
+  if "%1"=="/t" (
     set "TESTING=1"
   )
   shift
