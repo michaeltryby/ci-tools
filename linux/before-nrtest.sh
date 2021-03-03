@@ -73,8 +73,8 @@ fi
 # build URLs for test and benchmark files; need to standardize urls or change into argument
 if [[ ! -z "${RELEASE_TAG}" ]]
   then
-    TESTFILES_URL="${NRTESTS_URL}/archive/v${RELEASE_TAG}.tar.gz"
-    BENCHFILES_URL="${NRTESTS_URL}/releases/download/v${RELEASE_TAG}/benchmark-${PLATFORM}.tar.gz"
+    TESTFILES_URL="${NRTESTS_URL}/archive/${RELEASE_TAG}.tar.gz"
+    BENCHFILES_URL="${NRTESTS_URL}/releases/download/${RELEASE_TAG}/benchmark-${PLATFORM}.tar.gz"
   else
     echo "ERROR: tag %RELEASE_TAG% is invalid" ; exit 1
 fi
