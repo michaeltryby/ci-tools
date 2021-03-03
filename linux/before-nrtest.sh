@@ -61,11 +61,7 @@ then
 else
     echo INFO: Checking latest nrtestsuite release tag ...
     LATEST_URL="${NRTESTS_URL}/releases/latest"
-    LATEST_URL=${LATEST_URL/"github.com"/"api.github.com/repos"}
-    RELEASE_TAG=$( curl --silent "${LATEST_URL}" | grep -o '"tag_name": *"[^"]*"' | grep -o '"[^"]*"$' )
-    RELEASE_TAG="${RELEASE_TAG%\"}"
-    RELEASE_TAG="${RELEASE_TAG#\"}"
-    RELEASE_TAG=${RELEASE_TAG:1}
+    RELEASE_TAG=$( basename $( curl -Ls -o /dev/null -w %{url_effective} ${LATEST_URL} ) )
     echo INFO: Latest nrtestsuite release: ${RELEASE_TAG}
 fi
 

@@ -55,6 +55,7 @@ if [[ ! -z "$1" ]]
 then
   RELEASE_TAG=$1
 else
+  echo INFO: Checking latest nrtestsuite release tag ...
   LATEST_URL="${NRTESTS_URL}/releases/latest"
   RELEASE_TAG=$( basename $( curl -Ls -o /dev/null -w %{url_effective} ${LATEST_URL} ) )
   echo INFO: Latest nrtestsuite release: ${RELEASE_TAG}
