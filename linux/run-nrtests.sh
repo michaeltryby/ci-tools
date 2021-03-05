@@ -77,6 +77,8 @@ fi
 # perform nrtest execute
 echo "INFO: Creating SUT ${SUT_BUILD_ID} artifacts"
 NRTEST_COMMAND="${NRTEST_EXECUTE_CMD} ${TEST_APP_PATH} ${TESTS} -o ${TEST_OUTPUT_PATH}"
+ls -l
+echo ${NRTEST_COMMAND}
 eval ${NRTEST_COMMAND}
 RESULT=$?
 
