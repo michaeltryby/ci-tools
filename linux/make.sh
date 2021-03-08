@@ -15,43 +15,33 @@
 #    -g ("GENERATOR") defaults to "Ninja"
 #    -t builds and runs unit tests (requires Boost)
 
+shopt -s nocasematch
 
 export BUILD_HOME="build"
 
-# # Check to make sure PROJECT is defined
-# if [[ -z "${PROJECT}" ]]; then
-#     echo "ERROR: PROJECT could not be determined"
-#     exit 1
-# else
-#     echo INFO: Building ${PROJECT}  ...
-# fi
-
-# set global defaults
 
 # determine project directories
-SCRIPT_HOME=$(cd `dirname $0` && pwd)
+CURRENT_DIR=${PWD}
+SCRIPT_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 cd ${SCRIPT_HOME}
 cd ../../
 PROJECT_DIR=${PWD}
 
 
 # determine project
-if [[ -z "${PROJECT}" ]]
-then
-    
-    PROJECT_DIR_BASE_NAME="$( basename $PROJECT_DIR )"
-    if [[ "${PROJECT_DIR_BASE_NAME^^}" == "STO"* ]] || [[ "${PROJECT_DIR_BASE_NAME^^}"  == "SWM"* ]]; then
-        export PROJECT="swmm"
-    elif [[ "${PROJECT_DIR_BASE_NAME^^}"  == "WAT"* ]]  || [[ "${PROJECT_DIR_BASE_NAME^^}"  == *"EPA"* ]]; then
+if [ -z "${PROJECT}" ] ; then
+    if [ $( basename $PROJECT_DIR ) == "STO"* || "SWM"* ]; then
+         export PROJECT="swmm"
+    elif [ $( basename $PROJECT_DIR ) == "WAT"* || "EPA"* ]; then
         export PROJECT="epanet"
     fi
 fi
 
 
 # check that PROJECT is defined
-if [[ -z "${PROJECT}" ]] 
-then 
-    echo "ERROR: PROJECT must be defined"; exit 1 
+if [ -z "${PROJECT}" ]; then
+    echo "ERROR: PROJECT must be defined"
+    return 1
 fi
 
 
@@ -113,7 +103,7 @@ export PLATFORM="linux"
 echo "PLATFORM=$PLATFORM" >> $GITHUB_ENV
 
 # return user to current dir
-cd ${PROJECT_DIR}
+cd ${CURRENT_DIR}
 
 
-exit $RESULT
+return $RESULT
