@@ -36,7 +36,8 @@ PROJ_DIR=${PWD}
 
 
 # change current directory to test suite
-cd ${PROJ_DIR}/${TEST_HOME}
+cd ${TEST_HOME}
+ls -l
 
 # process optional arguments
 if [ ! -z "$1" ]; then
@@ -52,6 +53,7 @@ then
     ${SCRIPT_HOME}/app-config.sh "${PROJ_DIR}/${BUILD_HOME}/bin/Release" \
     ${PLATFORM} ${SUT_BUILD_ID} > "./apps/${PROJECT}-${SUT_BUILD_ID}.json"
 fi
+
 
 # build list of directories contaiing tests
 TESTS=$( find ./tests -mindepth 1 -type d -follow | paste -sd " " - )
