@@ -41,7 +41,7 @@ fi
 # check that PROJECT is defined
 if [ -z "${PROJECT}" ]; then
     echo "ERROR: PROJECT must be defined"
-    return 1
+    exit 1
 fi
 
 
