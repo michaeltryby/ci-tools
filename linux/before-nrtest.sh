@@ -97,7 +97,7 @@ curl -fsSL -o benchmark.tar.gz ${BENCHFILES_URL}
 
 # extract tests and benchmarks
 tar xzf nrtestfiles.tar.gz
-ln -s ${PROJECT}-nrtestsuite-${RELEASE_TAG}/public tests
+mv ${PROJECT}-nrtestsuite-${RELEASE_TAG}/public tests
 
 # create benchmark dir and extract benchmarks
 mkdir benchmark
