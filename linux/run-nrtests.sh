@@ -55,6 +55,7 @@ fi
 
 # build list of directories contaiing tests
 # TESTS=$( find ./tests -mindepth 1 -type d -follow | paste -sd " " - )
+find ./tests -mindepth 1 -type d -follow
 TESTS=$( find ./tests -mindepth 1 -type d -follow )
 echo $TESTS
 
