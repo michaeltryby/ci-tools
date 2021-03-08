@@ -116,4 +116,4 @@ echo "PLATFORM=$PLATFORM" >> $GITHUB_ENV
 cd ${PROJECT_DIR}
 
 
-return $RESULT
+exit $RESULT
