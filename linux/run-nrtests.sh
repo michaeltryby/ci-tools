@@ -54,7 +54,8 @@ then
 fi
 
 # build list of directories contaiing tests
-TESTS=$( find ./tests -mindepth 1 -type d -follow | paste -sd " " - )
+# TESTS=$( find ./tests -mindepth 1 -type d -follow | paste -sd " " - )
+TESTS=$( find ./tests -mindepth 1 -type d -follow )
 echo $TESTS
 
 # build nrtest execute command
