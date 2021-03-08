@@ -37,7 +37,6 @@ PROJ_DIR=${PWD}
 
 # change current directory to test suite
 cd ${TEST_HOME}
-ls -l
 
 # process optional arguments
 if [ ! -z "$1" ]; then
