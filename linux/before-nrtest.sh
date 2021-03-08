@@ -45,6 +45,8 @@ cd ${SCRIPT_HOME}
 cd ./../../
 PROJECT_DIR=${PWD}
 
+echo $PROJECT
+
 # set URL to github repo with nrtest files
 if [[ -z "${NRTESTS_URL}" ]]; then
   NRTESTS_URL="https://github.com/OpenWaterAnalytics/${PROJECT}-nrtestsuite"
@@ -75,6 +77,7 @@ if [[ ! -z "${RELEASE_TAG}" ]]
     echo "ERROR: tag %RELEASE_TAG% is invalid" ; exit 1
 fi
 
+echo $BENCHFILES_URL
 echo INFO: Staging files for regression testing
 
 # create a clean directory for staging regression tests

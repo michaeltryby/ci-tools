@@ -38,11 +38,11 @@ PROJECT_DIR=${PWD}
 # determine project
 if [[ -z "${PROJECT}" ]]
 then
-    echo "Test"
-    if [[ "${PROJECT_DIR^^}"  == *"STO"* ]] || [[ "${PROJECT_DIR^^}"  == *"SWM"* ]]; then
-        echo "Test"
+    
+    PROJECT_DIR_BASE_NAME="$( basename $PROJECT_DIR )"
+    if [[ "${PROJECT_DIR_BASE_NAME^^}" == "STO"* ]] || [[ "${PROJECT_DIR_BASE_NAME^^}"  == "SWM"* ]]; then
         export PROJECT="swmm"
-    elif [[ "${PROJECT_DIR^^}"  == *"WAT"* ]]  || [[ "${PROJECT_DIR^^}"  == *"EPA"* ]]; then
+    elif [[ "${PROJECT_DIR_BASE_NAME^^}"  == "WAT"* ]]  || [[ "${PROJECT_DIR_BASE_NAME^^}"  == *"EPA"* ]]; then
         export PROJECT="epanet"
     fi
 fi
