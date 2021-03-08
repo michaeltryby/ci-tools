@@ -16,23 +16,44 @@
 #    -t builds and runs unit tests (requires Boost)
 
 
-# Check to make sure PROJECT is defined
-if [[ -z "${PROJECT}" ]]; then
-    echo "ERROR: PROJECT could not be determined"
-    exit 1
-else
-    echo INFO: Building ${PROJECT}  ...
-fi
+export BUILD_HOME="build"
+
+# # Check to make sure PROJECT is defined
+# if [[ -z "${PROJECT}" ]]; then
+#     echo "ERROR: PROJECT could not be determined"
+#     exit 1
+# else
+#     echo INFO: Building ${PROJECT}  ...
+# fi
 
 # set global defaults
-export BUILD_HOME="build"
-export PLATFORM="linux"
 
 # determine project directories
 SCRIPT_HOME=$(cd `dirname $0` && pwd)
 cd ${SCRIPT_HOME}
 cd ../../
 PROJECT_DIR=${PWD}
+
+
+# determine project
+if [[ -z "${PROJECT}" ]]
+then
+    echo "Test"
+    if [[ "${PROJECT_DIR^^}"  == *"STO"* ]] || [[ "${PROJECT_DIR^^}"  == *"SWM"* ]]; then
+        echo "Test"
+        export PROJECT="swmm"
+    elif [[ "${PROJECT_DIR^^}"  == *"WAT"* ]]  || [[ "${PROJECT_DIR^^}"  == *"EPA"* ]]; then
+        export PROJECT="epanet"
+    fi
+fi
+
+
+# check that PROJECT is defined
+if [[ -z "${PROJECT}" ]] 
+then 
+    echo "ERROR: PROJECT must be defined"; exit 1 
+fi
+
 
 # prepare for artifact upload
 if [ ! -d upload ]; then
@@ -86,10 +107,13 @@ else
     cp ./${BUILD_HOME}/*.tar.gz ./upload >&1
 fi
 
+export PLATFORM="linux"
+
 #GitHub Actions
 echo "PLATFORM=$PLATFORM" >> $GITHUB_ENV
 
 # return user to current dir
 cd ${PROJECT_DIR}
 
-exit $RESULT
+
+return $RESULT
