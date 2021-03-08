@@ -29,7 +29,7 @@ PROJECT_DIR=${PWD}
 
 
 # determine project
-if [ -z "${PROJECT}" ] ; then
+if [ -z "${PROJECT}" ]; then
     if [ $( basename $PROJECT_DIR ) == "STO"* || "SWM"* ]; then
          export PROJECT="swmm"
     elif [ $( basename $PROJECT_DIR ) == "WAT"* || "EPA"* ]; then
@@ -57,8 +57,7 @@ TESTING=0
 
 POSITIONAL=()
 
-while [[ $# -gt 0 ]]
-do
+while [ $# -gt 0 ]; do
 key="$1"
 case $key in
     -g|--gen)
@@ -83,13 +82,11 @@ cmake -E make_directory ${BUILD_HOME}
 
 RESULT=$?
 
-if [ ${TESTING} -eq 1 ];
-then
+if [ ${TESTING} -eq 1 ]; then
     cmake -E chdir ./${BUILD_HOME} cmake -G "${GENERATOR}" -DBUILD_TESTS=ON .. \
     && cmake --build ./${BUILD_HOME}  --config Debug \
     && cmake -E chdir ./${BUILD_HOME}  ctest -C Debug --output-on-failure
     RESULT=$?
-
 else
     cmake -E chdir ./${BUILD_HOME} cmake -G "${GENERATOR}" -DBUILD_TESTS=OFF .. \
     && cmake --build ./${BUILD_HOME} --config Release --target package
