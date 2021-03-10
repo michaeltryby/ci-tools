@@ -102,4 +102,4 @@ echo "PLATFORM=$PLATFORM" >> $GITHUB_ENV
 # return user to current dir
 cd ${CURRENT_DIR}
 
-return $RESULT
+exit $RESULT
