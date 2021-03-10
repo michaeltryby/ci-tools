@@ -29,56 +29,25 @@
 export TEST_HOME="nrtests"
 
 
+echo INFO: Staging files for regression testing
+
 # check that env variables are set
-REQUIRED_VARS=('PROJECT' 'BUILD_HOME' 'PLATFORM')
-for i in ${REQUIRED_VARS[@]}
-do
-    if [[ -z "${i}" ]]; then
+REQUIRED_VARS=("PROJECT" "BUILD_HOME" "PLATFORM")
+for i in ${REQUIRED_VARS[@]}; do
+    if [ -z ${!i} ]; then
       echo "ERROR: $i must be defined"; exit 1;
     fi
 done
+echo "CHECK: all required variables are set"
 
 
-# determine project directory
-SCRIPT_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+# determine project directories
+CURRENT_DIR=${PWD}
+SCRIPT_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 cd ${SCRIPT_HOME}
-cd ./../../
+cd ../../
 PROJECT_DIR=${PWD}
 
-echo $PROJECT
-
-# set URL to github repo with nrtest files
-if [[ -z "${NRTESTS_URL}" ]]; then
-  NRTESTS_URL="https://github.com/OpenWaterAnalytics/${PROJECT}-nrtestsuite"
-fi
-
-
-echo INFO: Staging files for regression testing
-
-
-# use release tag arg else determine latest when available (need to be released for ;o)
-if [[ ! -z "$1" ]]
-then
-    RELEASE_TAG=$1
-else
-    echo INFO: Checking latest nrtestsuite release tag ...
-    LATEST_URL="${NRTESTS_URL}/releases/latest"
-    RELEASE_TAG=$( basename $( curl -Ls -o /dev/null -w %{url_effective} ${LATEST_URL} ) )
-    echo INFO: Latest nrtestsuite release: ${RELEASE_TAG}
-fi
-
-
-# build URLs for test and benchmark files; need to standardize urls or change into argument
-if [[ ! -z "${RELEASE_TAG}" ]]
-  then
-    TESTFILES_URL="${NRTESTS_URL}/archive/${RELEASE_TAG}.tar.gz"
-    BENCHFILES_URL="${NRTESTS_URL}/releases/download/${RELEASE_TAG}/benchmark-${PLATFORM}.tar.gz"
-  else
-    echo "ERROR: tag %RELEASE_TAG% is invalid" ; exit 1
-fi
-
-echo $BENCHFILES_URL
-echo INFO: Staging files for regression testing
 
 # create a clean directory for staging regression tests
 if [ -d ${TEST_HOME} ]; then
@@ -87,26 +56,68 @@ fi
 
 mkdir ${TEST_HOME}
 cd ${TEST_HOME}
+mkdir benchmark
 
+
+# use the shell var NRTEST_URL or if not set revert to default provided
+NRTESTS_URL=${NRTESTS_URL:="https://github.com/OpenWaterAnalytics/${PROJECT}-nrtestsuite"}
+echo CHECK: using NRTESTS_URL = ${NRTESTS_URL}
+
+
+# use passed arg else determine latest when available
+if [ -n "$1" ]; then
+    RELEASE_TAG=$1
+else
+    RELEASE_TAG=$( basename $( curl -Ls -o /dev/null -w %{url_effective} "${NRTESTS_URL}/releases/latest" ) )
+fi
+
+# perform release tag check
+if [ -z ${RELEASE_TAG} ]; then
+    echo "ERROR: relase tag must be defined" ; exit 1
+fi
+echo CHECK: using RELEASE_TAG = ${RELEASE_TAG}
+
+
+# build URLs for test and benchmark files
+TESTFILES_URL="${NRTESTS_URL}/archive/${RELEASE_TAG}.tar.gz"
+BENCHFILES_URL="${NRTESTS_URL}/releases/download/${RELEASE_TAG}/benchmark-${PLATFORM}.tar.gz"
 
 # retrieve swmm-examples for regression testing tar.gz
+echo CHECK: using TESTFILES_URL = ${TESTFILES_URL}
 curl -fsSL -o nrtestfiles.tar.gz ${TESTFILES_URL}
+if [ $? -ne 0 ]; then
+    exit 1;
+fi
 
 # retrieve swmm benchmark results
+echo CHECK: using BENCHFILES_URL = ${BENCHFILES_URL}
 curl -fsSL -o benchmark.tar.gz ${BENCHFILES_URL}
+if [ $? -ne 0 ]; then
+    exit 1;
+fi
+
 
 # extract tests and benchmarks
-tar xzf nrtestfiles.tar.gz
-ln -s ${PROJECT}-nrtestsuite-${RELEASE_TAG:1}/public tests
+if [ -f nrtestfiles.tar.gz ]; then
+    tar xzf nrtestfiles.tar.gz
+else
+    echo "ERROR: file nrtestfiles.tar.gz does not exist"; exit 1
+fi
 
 # create benchmark dir and extract benchmarks
-mkdir benchmark
-tar xzf benchmark.tar.gz -C benchmark
+if [ -f benchmark.tar.gz ]; then
+    tar xzf benchmark.tar.gz -C benchmark
+else
+    echo "ERROR: file benchmark.tar.gz does not exist"; exit 1
+fi
 
-#determine ref_build_id
+
+# set up link to tests
+ln -s ${PROJECT}-nrtestsuite-${RELEASE_TAG:1}/public tests
+
+
+# determine ref_build_id
 MANIFEST_FILE=$( find . -name manifest.json )
-echo MANIFEST FILE: $MANIFEST_FILE
-
 while read line; do
   if [[ $line == *"${PLATFORM} "* ]]; then
     REF_BUILD_ID=${line#*"${PLATFORM} "}
@@ -114,15 +125,17 @@ while read line; do
   fi
 done < $MANIFEST_FILE
 
-if [[ -z "${REF_BUILD_ID}" ]]
-  then
-  echo "ERROR: REF_BUILD_ID could not be determined" ; exit 1
+if [ -z "${REF_BUILD_ID}" ]; then
+    echo "ERROR: REF_BUILD_ID could not be determined" ; exit 1
 fi
+echo "CHECK: using REF_BUILD_ID = $REF_BUILD_ID"
+
 
 export REF_BUILD_ID=$REF_BUILD_ID
 
 # GitHub Actions
 echo "REF_BUILD_ID=$REF_BUILD_ID" >> $GITHUB_ENV
 
+
 # return user to current dir
-cd ${PROJECT_DIR}
+cd ${CURRENT_DIR}

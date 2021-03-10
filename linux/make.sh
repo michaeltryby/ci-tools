@@ -30,9 +30,9 @@ PROJECT_DIR=${PWD}
 
 # determine project
 if [ -z "${PROJECT}" ]; then
-    if [ $( basename $PROJECT_DIR ) == "STO"* || "SWM"* ]; then
+    if [[ $( basename $PROJECT_DIR ) == "STO"* || "SWM"* ]]; then
          export PROJECT="swmm"
-    elif [ $( basename $PROJECT_DIR ) == "WAT"* || "EPA"* ]; then
+    elif [[ $( basename $PROJECT_DIR ) == "WAT"* || "EPA"* ]]; then
         export PROJECT="epanet"
     fi
 fi
@@ -102,5 +102,4 @@ echo "PLATFORM=$PLATFORM" >> $GITHUB_ENV
 # return user to current dir
 cd ${CURRENT_DIR}
 
-
-exit $RESULT
+return $RESULT
