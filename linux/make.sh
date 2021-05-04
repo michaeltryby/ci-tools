@@ -15,24 +15,35 @@
 #    -g ("GENERATOR") defaults to "Ninja"
 #    -t builds and runs unit tests (requires Boost)
 
+shopt -s nocasematch
 
-# Check to make sure PROJECT is defined
-if [[ -z "${PROJECT}" ]]; then
-    echo "ERROR: PROJECT could not be determined"
-    exit 1
-else
-    echo INFO: Building ${PROJECT}  ...
-fi
-
-# set global defaults
 export BUILD_HOME="build"
-export PLATFORM="linux"
+
 
 # determine project directories
-SCRIPT_HOME=$(cd `dirname $0` && pwd)
+CURRENT_DIR=${PWD}
+SCRIPT_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 cd ${SCRIPT_HOME}
 cd ../../
 PROJECT_DIR=${PWD}
+
+
+# determine project
+if [ -z "${PROJECT}" ]; then
+    if [[ $( basename $PROJECT_DIR ) == "STO"* || "SWM"* ]]; then
+         export PROJECT="swmm"
+    elif [[ $( basename $PROJECT_DIR ) == "WAT"* || "EPA"* ]]; then
+        export PROJECT="epanet"
+    fi
+fi
+
+
+# check that PROJECT is defined
+if [ -z "${PROJECT}" ]; then
+    echo "ERROR: PROJECT must be defined"
+    exit 1
+fi
+
 
 # prepare for artifact upload
 if [ ! -d upload ]; then
@@ -46,8 +57,7 @@ TESTING=0
 
 POSITIONAL=()
 
-while [[ $# -gt 0 ]]
-do
+while [ $# -gt 0 ]; do
 key="$1"
 case $key in
     -g|--gen)
@@ -72,13 +82,11 @@ cmake -E make_directory ${BUILD_HOME}
 
 RESULT=$?
 
-if [ ${TESTING} -eq 1 ];
-then
+if [ ${TESTING} -eq 1 ]; then
     cmake -E chdir ./${BUILD_HOME} cmake -G "${GENERATOR}" -DBUILD_TESTS=ON .. \
     && cmake --build ./${BUILD_HOME}  --config Debug \
     && cmake -E chdir ./${BUILD_HOME}  ctest -C Debug --output-on-failure
     RESULT=$?
-
 else
     cmake -E chdir ./${BUILD_HOME} cmake -G "${GENERATOR}" -DBUILD_TESTS=OFF .. \
     && cmake --build ./${BUILD_HOME} --config Release --target package
@@ -86,10 +94,12 @@ else
     cp ./${BUILD_HOME}/*.tar.gz ./upload >&1
 fi
 
+export PLATFORM="linux"
+
 #GitHub Actions
 echo "PLATFORM=$PLATFORM" >> $GITHUB_ENV
 
 # return user to current dir
-cd ${PROJECT_DIR}
+cd ${CURRENT_DIR}
 
 exit $RESULT
