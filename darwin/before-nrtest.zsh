@@ -54,16 +54,18 @@ fi
 
 mkdir ${TEST_HOME}
 cd ${TEST_HOME}
-
+mkdir benchmark
 
 # set and check URL to github repo with nrtest files
 if [ -z $NRTESTS_URL ]; then
     NRTESTS_URL="https://github.com/OpenWaterAnalytics/${PROJECT}-nrtestsuite"
 fi
+
 curl -Ifs -o /dev/null ${NRTESTS_URL}
 if [ $? -ne 0 ]; then
     echo ERROR: NRTESTS_URL = ${NRTESTS_URL} does not exist; cd ${CUR_DIR}; return 1
 fi
+
 
 # use release tag arg else determine latest
 if [ -z "$1" ]; then
@@ -73,34 +75,32 @@ else
     RELEASE_TAG=$1
 fi
 
-
 # perform release tag check
-if [[ ! -v RELEASE_TAG ]]
-then
-  echo "ERROR: tag RELEASE_TAG is invalid" ; cd ${CUR_DIR}; return 1
+if [ -v RELEASE_TAG ]; then
+    echo CHECK: using RELEASE_TAG = ${RELEASE_TAG}
+else
+    echo "ERROR: tag RELEASE_TAG is invalid" ; cd ${CUR_DIR}; return 1
 fi
-echo CHECK: using RELEASE_TAG = ${RELEASE_TAG}
 
 
 # build URLs for test and benchmark files
 TESTFILES_URL="${NRTESTS_URL}/archive/${RELEASE_TAG}.tar.gz"
 BENCHFILES_URL="${NRTESTS_URL}/releases/download/${RELEASE_TAG}/benchmark-${PLATFORM}.tar.gz"
 
-
-# retrieve tests and benchmarks for regression testing
+# retrieve tests for regression testing
 echo CHECK: using TESTFILES_URL = ${TESTFILES_URL}
 curl -fsSL -o nrtestfiles.tar.gz ${TESTFILES_URL}
 
 # retrieve swmm benchmark results
 echo CHECK: using BENCHFILES_URL = ${BENCHFILES_URL}
-curl -fsSL -o benchmarks.tar.gz ${BENCHFILES_URL}
+curl -fsSL -o benchmark.tar.gz ${BENCHFILES_URL}
 
 
 # extract tests and benchmarks
 if [ -f nrtestfiles.tar.gz ]; then
     tar xzf nrtestfiles.tar.gz
 else
-    echo "ERROR: file nrtestfiles.tar.gz does not exist"; return 1
+    echo "ERROR: file nrtestfiles.tar.gz does not exist"; cd ${CUR_DIR}; return 1
 fi
 
 # create benchmark dir and extract benchmarks
@@ -118,7 +118,7 @@ ln -s ${PROJECT}-nrtestsuite-${RELEASE_TAG:1}/public tests
 
 # determine REF_BUILD_ID from manifest
 MANIFEST_FILE=$( find . -name manifest.json )
-if [ -f manifest.json ]; then
+if [ -v MANIFEST_FILE ]; then
     while read line; do
         if [[ $line == *"${PLATFORM} "* ]]; then
             REF_BUILD_ID=${line#*"${PLATFORM} "}
@@ -128,7 +128,6 @@ if [ -f manifest.json ]; then
 else
     echo "WARNING: file manifest.json does not exist"
 fi
-
 
 if [ -z "${REF_BUILD_ID}" ]; then
     echo "WARNING: REF_BUILD_ID could not be determined"
@@ -140,6 +139,7 @@ export REF_BUILD_ID=$REF_BUILD_ID
 
 # GitHub Actions
 echo "REF_BUILD_ID=$REF_BUILD_ID" >> $GITHUB_ENV
+
 
 # clean up
 unset RELEASE_TAG
