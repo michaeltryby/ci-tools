@@ -2,8 +2,8 @@
 #
 #  before-nrtest.sh - Runs before numerical regression test
 #
-#  Date Created: 11/15/2017
-#       Updated: 08/21/2020
+#  Date Created: Nov 15, 2017
+#       Updated: May 5, 2021
 #
 #  Author:       See AUTHORS
 #
@@ -20,11 +20,16 @@
 #  Arguments:
 #    1 - (RELEASE_TAG)  - Release tag
 #
-#  Note:
-#    Tests and benchmark files are stored in the swmm-example-networks repo.
+#  Notes:
+#    Tests and benchmark files are stored in the swmm-nrtestsuite repo or in
+#    repo pointed to by shell variable NRTESTS_URL.
+#
 #    This script retreives them using a stable URL associated with a release on
-#    GitHub and stages the files for nrtest to run. The script assumes that
-#    before-test.sh and app-config.sh are located together in the same folder.
+#    GitHub and stages the files in directory TEST_HOME for nrtest to run.
+#
+#    The script takes RELEASE_TAG as an argument to select with tagged version
+#    of tests and benchmarks is used for testing. Default behavior is to
+#    determine the "latest" tagged release and use it.
 #
 
 export TEST_HOME="nrtests"
