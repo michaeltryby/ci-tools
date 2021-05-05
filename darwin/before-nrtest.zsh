@@ -72,7 +72,7 @@ if [ $? -ne 0 ]; then
 fi
 
 
-# use release tag arg else determine latest
+# if no release tag arg determine latest else use passed argument
 if [ -z "$1" ]; then
     echo INFO: Checking latest nrtestsuite release tag ...
     RELEASE_TAG=$( basename $( curl -Ls -o /dev/null -w %{url_effective} "${NRTESTS_URL}/releases/latest" ) )
@@ -151,3 +151,5 @@ unset RELEASE_TAG
 
 # return user to current dir
 cd ${CUR_DIR}
+
+return 0
