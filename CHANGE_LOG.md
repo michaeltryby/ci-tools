@@ -6,5 +6,6 @@
 
 ## Latest Changes
  - Branch "dev" deprecated
- - Checks added to before_nrtest.zsh script
- - Missing benchmark file changed from ERROR to WARNING
+ - Checks added to before-nrtest.zsh script
+ - Missing ref benchmark files changed from ERROR to WARNING run-nrtests.zsh script
+ - Created package configuration files
