@@ -1,2 +1,8 @@
 libboost-dev
-libboost-all-dev
+libboost-test-dev
+libboost-system-dev
+libboost-thread-dev
+libboost-filesystem-dev
+libboost-chrono-dev
+libboost-date-time-dev
+libboost-atomic-dev
