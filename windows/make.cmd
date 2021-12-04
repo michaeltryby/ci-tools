@@ -2,7 +2,7 @@
 ::  make.cmd - builds project
 ::
 ::  Created: Oct 15, 2019
-::  Updated: May 29, 2020
+::  Updated: Dec 3, 2021
 ::
 ::  Author: See AUTHORS
 ::
