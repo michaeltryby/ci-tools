@@ -31,7 +31,6 @@ if not defined GITHUB_ENV (
 )
 
 :: determine project directory
-set "CUR_DIR=%CD%"
 set "SCRIPT_HOME=%~dp0"
 cd %SCRIPT_HOME%
 pushd ..
@@ -43,7 +42,7 @@ set "PROJ_DIR=%CD%"
 where cmake > nul && (
   echo CHECK: cmake installed
 ) || (
-  echo ERROR: cmake not installed & cd %CUR_DIR% & exit /B 1
+  echo ERROR: cmake not installed & goto ERROR
 )
 
 :: prepare for artifact upload
@@ -68,7 +67,7 @@ if not defined PROJECT (
 )
 
 if not defined PROJECT (
-  echo ERROR: PROJECT could not be determined & cd %CUR_DIR% & exit /B 1
+  echo ERROR: PROJECT could not be determined & goto ERROR
 ) else (
   echo CHECK: using PROJECT = %PROJECT%
 )
@@ -101,7 +100,7 @@ if NOT [%1]==[] (
 if defined GENERATOR (
   echo CHECK: using GENERATOR = %GENERATOR%
 ) || (
-  echo ERROR: GENERATOR not defined & cd %CUR_DIR% & exit /B 1
+  echo ERROR: GENERATOR not defined & cd %CUR_DIR% & goto ERROR
 )
 
 :: if generator has changed delete the build folder
@@ -122,7 +121,7 @@ if %TESTING% equ 1 (
   && cmake --build .\%BUILD_HOME% --config Debug^
   && cmake -E chdir .\%BUILD_HOME% ctest -C Debug --output-on-failure^
   || (
-    echo ERROR: Build and Test Failed & exit /B 1
+    echo ERROR: Build and Test Failed & goto ERROR
   )
 
 ) else (
@@ -131,7 +130,7 @@ if %TESTING% equ 1 (
   && (
     move /Y .\%BUILD_HOME%\*.zip .\upload > nul
   ) || (
-    echo ERROR: Build Failed & exit /B 1
+    echo ERROR: Build Failed & & goto ERROR
   )
 
 )
@@ -151,7 +150,7 @@ for /F "tokens=*" %%f in ( 'findstr CMAKE_SHARED_LINKER_FLAGS:STRING %BUILD_HOME
   )
 )
 if not defined PLATFORM (
-  echo ERROR: PLATFORM could not be determined & cd %CUR_DIR% & exit /B 1
+  echo ERROR: PLATFORM could not be determined & goto ERROR
 ) else (
   echo CHECK: using PLATFORM = %PLATFORM%
 )
@@ -161,7 +160,9 @@ if not defined PLATFORM (
 echo PLATFORM=%PLATFORM% >> %GITHUB_ENV%
 
 
-echo INFO: BUILD SUCCEEDED!
+echo INFO: BUILD SUCCEEDED
+exit /b 0
 
-:: return to users to current directory
-cd %CUR_DIR%
+:ERROR
+echo INFO: EXITING WITH ERRORS
+exit /b 1

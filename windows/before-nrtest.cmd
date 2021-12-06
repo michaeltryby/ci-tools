@@ -2,7 +2,7 @@
 ::  before-test.cmd - Stages test and benchmark files for nrtest
 ::
 ::  Created: Oct 16, 2019
-::  Updated: May 29, 2020
+::  Updated: Dec 6, 2021
 ::
 ::  Author: See AUTHORS
 ::
@@ -25,7 +25,7 @@
 ::    release, stages the files, and sets up the environment for nrtest to run.
 ::
 
-::@echo off
+@echo off
 
 :: set global default
 set "TEST_HOME=nrtests"
@@ -35,31 +35,28 @@ echo INFO: Staging files for regression testing
 
 :: check env variables and apply defaults
 for %%v in (PROJECT BUILD_HOME PLATFORM) do (
-  if not defined %%v ( echo ERROR: %%v must be defined & exit /B 1 )
+  if not defined %%v ( echo ERROR: %%v must be defined & goto ERROR )
 )
 echo CHECK: all required variables are set
 
 
 :: determine project directory
-set "CUR_DIR=%CD%"
 set "SCRIPT_HOME=%~dp0"
 cd %SCRIPT_HOME%
 pushd ..
 pushd ..
 set "PROJECT_DIR=%CD%"
 
+
+setlocal
+
+
 :: create a clean directory for staging regression tests
 if exist %TEST_HOME% (
   rmdir /s /q %TEST_HOME%
 )
 mkdir %TEST_HOME% && cd %TEST_HOME% || (
-  echo ERROR: unable to create %TEST_HOME% dir & cd %CUR_DIR% & exit /B 1
-)
-
-:: pass variables into local scope
-(
-  setlocal
-  set "CUR_DIR=%CUR_DIR%"
+  echo ERROR: unable to create %TEST_HOME% dir & goto ERROR
 )
 
 set "DEFAULT_TESTSUITE=https://github.com/OpenWaterAnalytics/%PROJECT%-nrtestsuite"
@@ -68,7 +65,7 @@ set "DEFAULT_TESTSUITE=https://github.com/OpenWaterAnalytics/%PROJECT%-nrtestsui
 :: check that dependencies are installed
 for %%d in (curl 7z) do (
   where %%d > nul
-  if %ERRORLEVEL% neq 0 ( echo ERROR: %%d not installed & cd %CUR_DIR% & exit /B 1 )
+  if %ERRORLEVEL% neq 0 ( echo ERROR: %%d not installed ] & goto ERROR )
 )
 echo CHECK: all dependencies are installed
 
@@ -94,7 +91,7 @@ if [%RELEASE_TAG%] == [] (
 if defined RELEASE_TAG (
   echo CHECK: using RELEASE_TAG = %RELEASE_TAG%
 ) else (
-  echo ERROR: tag %RELEASE_TAG% is invalid & cd %CUR_DIR% & exit /B 1
+  echo ERROR: tag %RELEASE_TAG% is invalid & goto ERROR
 )
 
 
@@ -108,26 +105,26 @@ echo CHECK: using BENCHFILES_URL = %BENCHFILES_URL%
 
 :: retrieve nrtest cases and benchmark results for regression testing
 curl -fsSL -o nrtestfiles.zip %TESTFILES_URL% || (
-  echo ERROR: unable to download testfiles & cd %CUR_DIR% & exit /B 1
+  echo ERROR: unable to download testfiles & goto ERROR
 )
 
 curl -fsSL -o benchmark.zip %BENCHFILES_URL% || (
-  echo ERROR: unable to download benchfiles & cd %CUR_DIR% & exit /B 1
+  echo ERROR: unable to download benchfiles & goto ERROR
 )
 
 
 :: extract tests, scripts, benchmarks, and manifest
 7z x nrtestfiles.zip * > nul || (
-  echo ERROR: file nrtestfiles.zip does not exist & cd %CUR_DIR% & exit /B 1
+  echo ERROR: file nrtestfiles.zip does not exist & goto ERROR
 )
 7z x benchmark.zip -obenchmark\ > nul || (
-  echo ERROR: file benchmark.zip does not exist & cd %CUR_DIR% & exit /B 1
+  echo ERROR: file benchmark.zip does not exist & goto ERROR
 )
 
 
 :: set up symlinks for tests directory
 mklink /D .\tests .\%PROJECT%-nrtestsuite-%RELEASE_TAG:~1%\public > nul || (
-  echo ERROR: unable to create tests dir symlink & cd %CUR_DIR% & exit /B 1
+  echo ERROR: unable to create tests dir symlink & goto ERROR
 )
 
 
@@ -141,7 +138,7 @@ for /F delims^=^"^ tokens^=4 %%d in ( 'findstr %PLATFORM% %TEST_HOME%\manifest.j
   for /F "tokens=2" %%r in ( 'echo %%d' ) do ( set "REF_BUILD_ID=%%r" )
 )
 if not defined REF_BUILD_ID (
-  echo "ERROR: REF_BUILD_ID could not be determined" & cd %CUR_DIR% & exit /B 1
+  echo "ERROR: REF_BUILD_ID could not be determined" & goto ERROR
 )
 
 :: GitHub Actions
@@ -149,5 +146,9 @@ echo REF_BUILD_ID=%REF_BUILD_ID% >> %GITHUB_ENV%
 
 
 :: return to users current directory
-echo INFO: FILE STAGING SUCCEEDED!
-cd %CUR_DIR%
+echo INFO: FILE STAGING SUCCEEDED
+exit /b 0
+
+:ERROR
+echo INFO: EXITING WITH ERRORS
+exit /b 1
