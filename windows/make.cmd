@@ -18,7 +18,7 @@
 ::    -t builds and runs unit tests (requires Boost)
 ::
 
-@echo off
+::@echo off
 
 
 :: set global defaults
@@ -130,7 +130,7 @@ if %TESTING% equ 1 (
   && (
     move /Y .\%BUILD_HOME%\*.zip .\upload > nul
   ) || (
-    echo ERROR: Build Failed & & goto ERROR
+    echo ERROR: Build Failed & goto ERROR
   )
 
 )
