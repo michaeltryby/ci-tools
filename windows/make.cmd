@@ -18,12 +18,12 @@
 ::    -t builds and runs unit tests (requires Boost)
 ::
 
-::echo off
+@echo off
 
 
 :: set global defaults
-set "BUILD_HOME=build"
-set "PLATFORM=win32"
+set BUILD_HOME=build
+set PLATFORM=win32
 
 :: check if on an Actions runner or local
 if not defined GITHUB_ENV (
@@ -31,6 +31,7 @@ if not defined GITHUB_ENV (
 )
 
 :: determine project directory
+set "CUR_DIR=%CD%"
 set "SCRIPT_HOME=%~dp0"
 cd %SCRIPT_HOME%
 pushd ..
@@ -39,8 +40,10 @@ set "PROJ_DIR=%CD%"
 
 
 :: check for requirements
-where cmake > nul || (
-  echo ERROR: cmake not installed )
+where cmake > nul && (
+  echo CHECK: cmake installed
+) || (
+  echo ERROR: cmake not installed & cd %CUR_DIR% & exit /B 1
 )
 
 :: prepare for artifact upload
@@ -48,7 +51,9 @@ if not exist upload (
   mkdir upload
 )
 
+
 setlocal EnableDelayedExpansion
+
 
 :: determine PROJECT
 for %%i in ( %PROJ_DIR% ) do (
@@ -63,7 +68,9 @@ if not defined PROJECT (
 )
 
 if not defined PROJECT (
-  echo "ERROR: PROJECT could not be determined" & exit /B 1
+  echo ERROR: PROJECT could not be determined & cd %CUR_DIR% & exit /B 1
+) else (
+  echo CHECK: using PROJECT = %PROJECT%
 )
 
 :: GitHub Actions
@@ -74,7 +81,7 @@ echo INFO: Building %PROJECT%  ...
 
 
 :: set local defaults
-set "GENERATOR=Visual Studio 15 2017"
+set "GENERATOR=Visual Studio 15 2017 Win64"
 set "TESTING=0"
 
 :: process arguments
@@ -91,6 +98,11 @@ if NOT [%1]==[] (
   goto :loop
 )
 
+if defined GENERATOR (
+  echo CHECK: using GENERATOR = %GENERATOR%
+) || (
+  echo ERROR: GENERATOR not defined & cd %CUR_DIR% & exit /B 1
+)
 
 :: if generator has changed delete the build folder
 if exist %BUILD_HOME% (
@@ -125,19 +137,31 @@ if %TESTING% equ 1 (
 )
 
 
+:: Pass PROJECT out from local scope
+(
+  endlocal
+  set "PROJECT=%PROJECT%"
+)
+
+
 :: determine PLATFORM from CmakeCache.txt file
 for /F "tokens=*" %%f in ( 'findstr CMAKE_SHARED_LINKER_FLAGS:STRING %BUILD_HOME%\CmakeCache.txt' ) do (
   for /F "delims=: tokens=3" %%m in ( 'echo %%f' ) do (
     if "%%m" == "X86" ( set "PLATFORM=win32" ) else if "%%m" == "x64" ( set "PLATFORM=win64" )
   )
 )
-if not defined PLATFORM ( echo ERROR: PLATFORM could not be determined & exit /B 1 )
+if not defined PLATFORM (
+  echo ERROR: PLATFORM could not be determined & cd %CUR_DIR% & exit /B 1
+) else (
+  echo CHECK: using PLATFORM = %PLATFORM%
+)
 
 
 :: GitHub Actions
 echo PLATFORM=%PLATFORM% >> %GITHUB_ENV%
 
-:: return to users to project directory
-cd %PROJ_DIR%
 
-exit /B 1
+echo INFO: BUILD SUCCEEDED!
+
+:: return to users to current directory
+cd %CUR_DIR%

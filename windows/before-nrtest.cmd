@@ -30,40 +30,59 @@
 :: set global default
 set "TEST_HOME=nrtests"
 
+
+echo INFO: Staging files for regression testing
+
+:: check env variables and apply defaults
+for %%v in (PROJECT BUILD_HOME PLATFORM) do (
+  if not defined %%v ( echo ERROR: %%v must be defined & exit /B 1 )
+)
+echo CHECK: all required variables are set
+
+
 :: determine project directory
+set "CUR_DIR=%CD%"
 set "SCRIPT_HOME=%~dp0"
 cd %SCRIPT_HOME%
 pushd ..
 pushd ..
 set "PROJECT_DIR=%CD%"
 
-setlocal
+:: create a clean directory for staging regression tests
+if exist %TEST_HOME% (
+  rmdir /s /q %TEST_HOME%
+)
+mkdir %TEST_HOME% && cd %TEST_HOME% || (
+  echo ERROR: unable to create %TEST_HOME% dir & cd %CUR_DIR% & exit /B 1
+)
+
+:: pass variables into local scope
+(
+  setlocal
+  set "CUR_DIR=%CUR_DIR%"
+)
+
+set "DEFAULT_TESTSUITE=https://github.com/OpenWaterAnalytics/%PROJECT%-nrtestsuite"
 
 
 :: check that dependencies are installed
 for %%d in (curl 7z) do (
   where %%d > nul
-  if %ERRORLEVEL% neq 0 ( echo "ERROR: %%d not installed" & exit /B 1 )
+  if %ERRORLEVEL% neq 0 ( echo ERROR: %%d not installed & cd %CUR_DIR% & exit /B 1 )
 )
+echo CHECK: all dependencies are installed
 
 
 :: set URL to github repo with test files
 if not defined NRTESTS_URL (
-  set NRTESTS_URL="https://github.com/OpenWaterAnalytics/%PROJECT%-nrtestsuite"
+  set "NRTESTS_URL=%DEFAULT_TESTSUITE%"
 )
+echo CHECK: using NRTESTS_URL = %NRTESTS_URL%
+
 
 :: if release tag isn't provided latest tag will be retrieved
 if [%1] == [] (set "RELEASE_TAG="
 ) else (set "RELEASE_TAG=%~1")
-
-
-:: check env variables and apply defaults
-for %%v in (PROJECT BUILD_HOME PLATFORM) do (
-  if not defined %%v ( echo "ERROR: %%v must be defined" & exit /B 1 )
-)
-
-echo INFO: Staging files for regression testing
-
 
 :: determine latest tag in the tests repo
 if [%RELEASE_TAG%] == [] (
@@ -73,50 +92,62 @@ if [%RELEASE_TAG%] == [] (
 )
 
 if defined RELEASE_TAG (
-  set TESTFILES_URL=%NRTESTS_URL%/archive/%RELEASE_TAG%.zip
-  set BENCHFILES_URL=%NRTESTS_URL%/releases/download/%RELEASE_TAG%/benchmark-%PLATFORM%.zip
+  echo CHECK: using RELEASE_TAG = %RELEASE_TAG%
 ) else (
-  echo ERROR: tag %RELEASE_TAG% is invalid & exit /B 1
+  echo ERROR: tag %RELEASE_TAG% is invalid & cd %CUR_DIR% & exit /B 1
 )
 
 
-:: create a clean directory for staging regression tests
-if exist %TEST_HOME% (
-  rmdir /s /q %TEST_HOME%
-)
-mkdir %TEST_HOME%
-if %ERRORLEVEL% NEQ 0 ( echo "ERROR: unable to make %TEST_HOME% dir" & exit /B 1 )
-cd %TEST_HOME%
-if %ERRORLEVEL% NEQ 0 ( echo "ERROR: unable to cd %TEST_HOME% dir" & exit /B 1 )
+:: Build URLs for test and benchmark files
+set TESTFILES_URL=%NRTESTS_URL%/archive/%RELEASE_TAG%.zip
+echo CHECK: using TESTFILES_URL = %TESTFILES_URL%
+
+set BENCHFILES_URL=%NRTESTS_URL%/releases/download/%RELEASE_TAG%/benchmark-%PLATFORM%.zip
+echo CHECK: using BENCHFILES_URL = %BENCHFILES_URL%
 
 
 :: retrieve nrtest cases and benchmark results for regression testing
-curl -fsSL -o nrtestfiles.zip %TESTFILES_URL%
-curl -fsSL -o benchmark.zip %BENCHFILES_URL%
+curl -fsSL -o nrtestfiles.zip %TESTFILES_URL% || (
+  echo ERROR: unable to download testfiles & cd %CUR_DIR% & exit /B 1
+)
+
+curl -fsSL -o benchmark.zip %BENCHFILES_URL% || (
+  echo ERROR: unable to download benchfiles & cd %CUR_DIR% & exit /B 1
+)
 
 
 :: extract tests, scripts, benchmarks, and manifest
-7z x nrtestfiles.zip * > nul
-7z x benchmark.zip -obenchmark\ > nul
-7z e benchmark.zip -o. manifest.json -r > nul
+7z x nrtestfiles.zip * > nul || (
+  echo ERROR: file nrtestfiles.zip does not exist & cd %CUR_DIR% & exit /B 1
+)
+7z x benchmark.zip -obenchmark\ > nul || (
+  echo ERROR: file benchmark.zip does not exist & cd %CUR_DIR% & exit /B 1
+)
 
 
 :: set up symlinks for tests directory
-mklink /D .\tests .\%PROJECT%-nrtestsuite-%RELEASE_TAG:~1%\public > nul
+mklink /D .\tests .\%PROJECT%-nrtestsuite-%RELEASE_TAG:~1%\public > nul || (
+  echo ERROR: unable to create tests dir symlink & cd %CUR_DIR% & exit /B 1
+)
 
 
 endlocal
 
 
 :: determine REF_BUILD_ID from manifest file
+7z e benchmark.zip -o. manifest.json -r > nul
+
 for /F delims^=^"^ tokens^=4 %%d in ( 'findstr %PLATFORM% %TEST_HOME%\manifest.json' ) do (
   for /F "tokens=2" %%r in ( 'echo %%d' ) do ( set "REF_BUILD_ID=%%r" )
 )
-if not defined REF_BUILD_ID ( echo "ERROR: REF_BUILD_ID could not be determined" & exit /B 1 )
+if not defined REF_BUILD_ID (
+  echo "ERROR: REF_BUILD_ID could not be determined" & cd %CUR_DIR% & exit /B 1
+)
 
 :: GitHub Actions
-echo REF_BUILD_ID=%REF_BUILD_ID%>> %GITHUB_ENV%
+echo REF_BUILD_ID=%REF_BUILD_ID% >> %GITHUB_ENV%
 
 
 :: return to users current directory
-cd %PROJECT_DIR%
+echo INFO: FILE STAGING SUCCEEDED!
+cd %CUR_DIR%
