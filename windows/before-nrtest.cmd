@@ -142,7 +142,7 @@ if not defined REF_BUILD_ID (
 )
 
 :: GitHub Actions
-echo REF_BUILD_ID=%REF_BUILD_ID% >> %GITHUB_ENV%
+echo REF_BUILD_ID=%REF_BUILD_ID%>> %GITHUB_ENV%
 
 
 :: return to users current directory

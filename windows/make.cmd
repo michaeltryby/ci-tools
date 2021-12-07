@@ -73,7 +73,7 @@ if not defined PROJECT (
 )
 
 :: GitHub Actions
-echo PROJECT=%PROJECT% >> %GITHUB_ENV%
+echo PROJECT=%PROJECT%>> %GITHUB_ENV%
 
 
 echo INFO: Building %PROJECT%  ...
@@ -157,7 +157,7 @@ if not defined PLATFORM (
 
 
 :: GitHub Actions
-echo PLATFORM=%PLATFORM% >> %GITHUB_ENV%
+echo PLATFORM=%PLATFORM%>> %GITHUB_ENV%
 
 
 echo INFO: BUILD SUCCEEDED
