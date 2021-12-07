@@ -104,26 +104,36 @@ echo CHECK: using BENCHFILES_URL = %BENCHFILES_URL%
 
 
 :: retrieve nrtest cases and benchmark results for regression testing
-curl -fsSL -o nrtestfiles.zip %TESTFILES_URL% || (
+curl -fsSL -o nrtestfiles.zip %TESTFILES_URL% && (
+  echo CHECK: testfiles download successful
+) || (
   echo ERROR: unable to download testfiles & goto ERROR
 )
 
-curl -fsSL -o benchmark.zip %BENCHFILES_URL% || (
+curl -fsSL -o benchmark.zip %BENCHFILES_URL% && (
+  echo CHECK: benchfiles download successful
+) || (
   echo ERROR: unable to download benchfiles & goto ERROR
 )
 
 
 :: extract tests, scripts, benchmarks, and manifest
-7z x nrtestfiles.zip * > nul || (
+7z x nrtestfiles.zip * > nul && (
+  echo CHECK: testfiles extraction successful
+) || (
   echo ERROR: file nrtestfiles.zip does not exist & goto ERROR
 )
-7z x benchmark.zip -obenchmark\ > nul || (
+7z x benchmark.zip -obenchmark\ > nul && (
+  echo CHECK: benchfiles extraction successful
+) || (
   echo ERROR: file benchmark.zip does not exist & goto ERROR
 )
 
 
 :: set up symlinks for tests directory
-mklink /D .\tests .\%PROJECT%-nrtestsuite-%RELEASE_TAG:~1%\public > nul || (
+mklink /D .\tests .\%PROJECT%-nrtestsuite-%RELEASE_TAG:~1%\public > nul && (
+  echo CHECK: symlink creation successful
+) || (
   echo ERROR: unable to create tests dir symlink & goto ERROR
 )
 
