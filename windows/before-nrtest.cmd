@@ -123,12 +123,18 @@ curl -fsSL -o benchmark.zip %BENCHFILES_URL% && (
 ) || (
   echo ERROR: file nrtestfiles.zip does not exist & goto ERROR
 )
+
 7z x benchmark.zip -obenchmark\ > nul && (
   echo CHECK: benchfiles extraction successful
 ) || (
   echo ERROR: file benchmark.zip does not exist & goto ERROR
 )
 
+7z e benchmark.zip -o. manifest.json -r > nul && (
+  echo CHECK: manifest file extraction successful
+) || (
+  echo ERROR: file benchmark.zip does not exist & goto ERROR
+)
 
 :: set up symlinks for tests directory
 mklink /D .\tests .\%PROJECT%-nrtestsuite-%RELEASE_TAG:~1%\public > nul && (
@@ -142,8 +148,6 @@ endlocal
 
 
 :: determine REF_BUILD_ID from manifest file
-7z e benchmark.zip -o. manifest.json -r > nul
-
 for /F delims^=^"^ tokens^=4 %%d in ( 'findstr %PLATFORM% %TEST_HOME%\manifest.json' ) do (
   for /F "tokens=2" %%r in ( 'echo %%d' ) do ( set "REF_BUILD_ID=%%r" )
 )
