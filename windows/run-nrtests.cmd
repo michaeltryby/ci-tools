@@ -125,10 +125,10 @@ if %RESULT% neq 0 (
 )
 
 :: return user to their current dir and exit
-if %RESULT% eq 0 (
-  echo INFO: nrtest exiting successfully
-) else (
+if %RESULT% neq 0 (
   echo ERROR: nrtest exiting with errors
+) else (
+  echo INFO: nrtest exiting successfully
 )
 cd %PROJ_DIR%
 exit /B %RESULT%
