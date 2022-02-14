@@ -97,6 +97,9 @@ if exist %TEST_OUTPUT_PATH% (
   rmdir /s /q %TEST_OUTPUT_PATH%
 )
 
+
+echo.
+
 :: perform nrtest execute
 echo INFO: Creating SUT %SUT_BUILD_ID% artifacts
 %NRTEST_EXECUTE_CMD% %TEST_APP_PATH% %TESTS% -o %TEST_OUTPUT_PATH%
@@ -112,6 +115,9 @@ if %RESULT% neq 0 (
 echo INFO: Comparing SUT artifacts to REF %REF_BUILD_ID%
 %NRTEST_COMPARE_CMD% %TEST_OUTPUT_PATH% %REF_OUTPUT_PATH% --rtol %RTOL_VALUE% --atol %ATOL_VALUE% -o benchmark\receipt.json
 set RESULT=!ERRORLEVEL!
+
+echo.
+
 
 cd .\benchmark
 
