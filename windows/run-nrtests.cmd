@@ -49,6 +49,8 @@ cd %PROJ_DIR%\%TEST_HOME%
 if [%1]==[] ( set "SUT_BUILD_ID=local"
 ) else ( set "SUT_BUILD_ID=%~1" )
 
+echo CHECK: Using SUT_BUILD_ID = %SUT_BUILD_ID%
+
 
 :: check if app config file exists
 if not exist apps\%PROJECT%-%SUT_BUILD_ID%.json (
