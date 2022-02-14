@@ -116,15 +116,19 @@ set RESULT=!ERRORLEVEL!
 cd .\benchmark
 
 :: stage artifacts for upload
+echo INFO: preparing artifacts for upload
 if %RESULT% neq 0 (
-  echo ERROR: nrtest exited with errors
   7z a benchmark-%PLATFORM%.zip .\%PROJECT%-%SUT_BUILD_ID% > nul
   move /Y benchmark-%PLATFORM%.zip %PROJ_DIR%\upload > nul
 ) else (
-  echo INFO: nrtest exited successfully
   move /Y receipt.json %PROJ_DIR%\upload > nul
 )
 
 :: return user to their current dir and exit
+if %RESULT% eq 0 (
+  echo INFO: nrtest exiting successfully
+) else (
+  echo ERROR: nrtest exiting with errors
+)
 cd %PROJ_DIR%
 exit /B %RESULT%
