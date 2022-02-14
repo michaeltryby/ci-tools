@@ -151,7 +151,9 @@ endlocal
 for /F delims^=^"^ tokens^=4 %%d in ( 'findstr %PLATFORM% %TEST_HOME%\manifest.json' ) do (
   for /F "tokens=2" %%r in ( 'echo %%d' ) do ( set "REF_BUILD_ID=%%r" )
 )
-if not defined REF_BUILD_ID (
+if defined REF_BUILD_ID (
+  echo "CHECK: Using REF_BUILD_ID = %REF_BUILD_ID%
+) else (
   echo "ERROR: REF_BUILD_ID could not be determined" & goto ERROR
 )
 
