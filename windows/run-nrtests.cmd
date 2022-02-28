@@ -100,7 +100,7 @@ if %RESULT% neq 0 (
   echo WARNING: nrtest execute exited with errors
 )
 
-
+:: perform comparison if there is a reference benchmark
 if defined REF_BUILD_ID (
   :: build nrtest compare command
   set NRTEST_COMPARE_CMD=python.exe %NRTEST_SCRIPT_PATH%\nrtest compare
@@ -110,7 +110,7 @@ if defined REF_BUILD_ID (
 
   :: perform nrtest compare
   echo INFO: Comparing SUT artifacts to REF %REF_BUILD_ID%
-  %NRTEST_COMPARE_CMD% %TEST_OUTPUT_PATH% %REF_OUTPUT_PATH% --rtol %RTOL_VALUE% --atol %ATOL_VALUE% -o benchmark\receipt.json
+  !NRTEST_COMPARE_CMD! %TEST_OUTPUT_PATH% !REF_OUTPUT_PATH! --rtol !RTOL_VALUE! --atol !ATOL_VALUE! -o benchmark\receipt-%PLATFORM%.json
   set RESULT=!ERRORLEVEL!
 ) else (
   set RESULT=-1

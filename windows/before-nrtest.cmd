@@ -150,12 +150,10 @@ endlocal
 :: determine REF_BUILD_ID from manifest file
 for /F delims^=^"^ tokens^=4 %%d in ( 'findstr %PLATFORM% %TEST_HOME%\manifest.json' ) do (
   for /F "tokens=2" %%r in ( 'echo %%d' ) do ( set "REF_BUILD_ID=%%r" )
-) && (
-  echo CHECK: using REF_BUILD_ID = %REF_BUILD_ID%
 ) || (
   echo ERROR: REF_BUILD_ID could not be determined & goto ERROR
 )
-
+echo CHECK: using REF_BUILD_ID = %REF_BUILD_ID%
 
 :: GitHub Actions
 echo REF_BUILD_ID=%REF_BUILD_ID%>> %GITHUB_ENV%
