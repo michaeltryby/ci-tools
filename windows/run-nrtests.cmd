@@ -113,7 +113,7 @@ if defined REF_BUILD_ID (
   %NRTEST_COMPARE_CMD% %TEST_OUTPUT_PATH% %REF_OUTPUT_PATH% --rtol %RTOL_VALUE% --atol %ATOL_VALUE% -o benchmark\receipt.json
   set RESULT=!ERRORLEVEL!
 ) else (
-  set "RESULT=-1"
+  set RESULT=-1
 )
 
 
