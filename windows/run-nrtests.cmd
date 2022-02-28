@@ -94,11 +94,11 @@ echo INFO: Creating SUT %SUT_BUILD_ID% artifacts
 %NRTEST_EXECUTE_CMD% %TEST_APP_PATH% %TESTS% -o %TEST_OUTPUT_PATH%
 set RESULT=!ERRORLEVEL!
 
-echo.
-
 if %RESULT% neq 0 (
   echo WARNING: nrtest execute exited with errors
 )
+
+echo.
 
 :: perform comparison if there is a reference benchmark
 if defined REF_BUILD_ID (
@@ -117,6 +117,8 @@ if defined REF_BUILD_ID (
 )
 
 
+echo.
+
 cd .\benchmark
 
 :: stage artifacts for upload
@@ -125,7 +127,7 @@ if %RESULT% neq 0 (
   7z a benchmark-%PLATFORM%.zip .\%PROJECT%-%SUT_BUILD_ID% > nul
   move /Y benchmark-%PLATFORM%.zip %PROJ_DIR%\upload > nul
 ) else (
-  move /Y receipt.json %PROJ_DIR%\upload > nul
+  move /Y receipt-%PLATFORM%.json %PROJ_DIR%\upload > nul
 )
 
 
