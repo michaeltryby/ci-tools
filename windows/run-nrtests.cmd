@@ -121,7 +121,7 @@ echo.
 
 cd .\benchmark
 
-:: stage artifacts for upload
+:: stage SUT artifacts/receipt for upload
 echo INFO: preparing artifacts for upload
 if %RESULT% neq 0 (
   7z a benchmark-%PLATFORM%.zip .\%PROJECT%-%SUT_BUILD_ID% > nul
@@ -133,9 +133,9 @@ if %RESULT% neq 0 (
 
 :: return user to their current dir and exit
 if %RESULT% neq 0 (
-  echo ERROR: nrtest exiting with errors
+  echo ERROR: run-nrtest exiting with errors
 ) else (
-  echo INFO: nrtest exiting successfully
+  echo INFO: run-nrtest exiting successfully
 )
 cd %PROJ_DIR%
 exit /B %RESULT%

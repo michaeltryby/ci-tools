@@ -160,13 +160,13 @@ echo REF_BUILD_ID=%REF_BUILD_ID%>> %GITHUB_ENV%
 
 
 :: return to users current directory
-echo INFO: FILE STAGING SUCCEEDED
+echo INFO: before-nrtest exiting successfully
 exit /b 0
 
 :WARNING
-echo INFO: EXITING WITH WARNINGS
+echo INFO: before-nrtest exiting with warnings
 exit /b 0
 
 :ERROR
-echo INFO: EXITING WITH ERRORS
+echo ERROR: before-nrtest exiting with errors
 exit /b 1

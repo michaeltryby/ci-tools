@@ -160,9 +160,9 @@ if not defined PLATFORM (
 echo PLATFORM=%PLATFORM%>> %GITHUB_ENV%
 
 
-echo INFO: BUILD SUCCEEDED
+echo INFO: build exiting successfully
 exit /b 0
 
 :ERROR
-echo INFO: EXITING WITH ERRORS
+echo ERROR: build exiting with errors
 exit /b 1
