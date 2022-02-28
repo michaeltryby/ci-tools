@@ -95,33 +95,40 @@ if defined RELEASE_TAG (
 )
 
 
-:: Build URLs for test and benchmark files
+:: Set up test files
 set TESTFILES_URL=%NRTESTS_URL%/archive/%RELEASE_TAG%.zip
 echo CHECK: using TESTFILES_URL = %TESTFILES_URL%
 
-set BENCHFILES_URL=%NRTESTS_URL%/releases/download/%RELEASE_TAG%/benchmark-%PLATFORM%.zip
-echo CHECK: using BENCHFILES_URL = %BENCHFILES_URL%
-
-
-:: retrieve nrtest cases and benchmark results for regression testing
+:: retrieve nrtest cases for regression testing
 curl -fsSL -o nrtestfiles.zip %TESTFILES_URL% && (
   echo CHECK: testfiles download successful
 ) || (
   echo ERROR: unable to download testfiles & goto ERROR
 )
 
-curl -fsSL -o benchmark.zip %BENCHFILES_URL% && (
-  echo CHECK: benchfiles download successful
-) || (
-  echo ERROR: unable to download benchfiles & goto ERROR
-)
-
-
-:: extract tests, scripts, benchmarks, and manifest
+:: extract tests
 7z x nrtestfiles.zip * > nul && (
   echo CHECK: testfiles extraction successful
 ) || (
   echo ERROR: file nrtestfiles.zip does not exist & goto ERROR
+)
+
+:: create symlink to test folder
+mklink /D .\tests .\%PROJECT%-nrtestsuite-%RELEASE_TAG:~1%\public > nul && (
+  echo CHECK: symlink creation successful
+) || (
+  echo ERROR: unable to create tests dir symlink & goto ERROR
+)
+
+
+:: Set up benchmark files
+set BENCHFILES_URL=%NRTESTS_URL%/releases/download/%RELEASE_TAG%/benchmark-%PLATFORM%.zip
+echo CHECK: using BENCHFILES_URL = %BENCHFILES_URL%
+
+curl -fsSL -o benchmark.zip %BENCHFILES_URL% && (
+  echo CHECK: benchfiles download successful
+) || (
+  echo WARNING: unable to download benchmark files & goto WARNING
 )
 
 7z x benchmark.zip -obenchmark\ > nul && (
@@ -136,13 +143,6 @@ curl -fsSL -o benchmark.zip %BENCHFILES_URL% && (
   echo ERROR: file benchmark.zip does not exist & goto ERROR
 )
 
-:: set up symlinks for tests directory
-mklink /D .\tests .\%PROJECT%-nrtestsuite-%RELEASE_TAG:~1%\public > nul && (
-  echo CHECK: symlink creation successful
-) || (
-  echo ERROR: unable to create tests dir symlink & goto ERROR
-)
-
 
 endlocal
 
@@ -150,12 +150,12 @@ endlocal
 :: determine REF_BUILD_ID from manifest file
 for /F delims^=^"^ tokens^=4 %%d in ( 'findstr %PLATFORM% %TEST_HOME%\manifest.json' ) do (
   for /F "tokens=2" %%r in ( 'echo %%d' ) do ( set "REF_BUILD_ID=%%r" )
+) && (
+  echo CHECK: using REF_BUILD_ID = %REF_BUILD_ID%
+) || (
+  echo ERROR: REF_BUILD_ID could not be determined & goto ERROR
 )
-if defined REF_BUILD_ID (
-  echo CHECK: Using REF_BUILD_ID = %REF_BUILD_ID%
-) else (
-  echo ERROR: REF_BUILD_ID could not be determined" & goto ERROR
-)
+
 
 :: GitHub Actions
 echo REF_BUILD_ID=%REF_BUILD_ID%>> %GITHUB_ENV%
@@ -163,6 +163,10 @@ echo REF_BUILD_ID=%REF_BUILD_ID%>> %GITHUB_ENV%
 
 :: return to users current directory
 echo INFO: FILE STAGING SUCCEEDED
+exit /b 0
+
+:WARNING
+echo INFO: EXITING WITH WARNINGS
 exit /b 0
 
 :ERROR
