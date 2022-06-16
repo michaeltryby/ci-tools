@@ -83,7 +83,7 @@ if [%1] == [] (set "RELEASE_TAG="
 
 :: determine latest tag in the tests repo
 if [%RELEASE_TAG%] == [] (
-  for /F delims^=^"^ tokens^=2 %%g in ('curl --silent %NRTESTS_URL%/releases/latest') do (
+  for /F delims^=^"^ tokens^=1 %%g in ('curl -Ls -o nul -w%{url_effective} %NRTESTS_URL%/releases/latest') do (
     set "RELEASE_TAG=%%~nxg"
   )
 )
