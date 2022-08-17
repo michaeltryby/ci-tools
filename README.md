@@ -9,8 +9,19 @@
 --->
 
 # ci-tools
-Tools for continuous integration and local testing for SWMM and EPANET
+Tools for local and remote testing for SWMM and EPANET
 
+
+### Features
+
+  - Zero configuration local testing
+  - Simplifies CI setup
+  - Support for testing on Windows, Linux, and Mac platforms
+  - Unique identification of Software Under Test (SUT)
+  - Creation of manifest and receipt artifacts to document QA/QC activities
+  - Management of tests and benchmarks in separate repository
+  - Automatic generation of test artifacts to simplify benchmark maintenance
+  
 
 ### Dependencies
 
