@@ -2,7 +2,7 @@
 # requirements-win.txt - Python requirements for running nrtest on Win32/Win64
 #
 # Date Created:  10/17/2019
-# Date Updated:  11/26/2019
+# Date Updated:  10/16/2023
 #
 # Author: See AUTHORS
 #
@@ -12,12 +12,12 @@
 #   pip install -r tools/requirements-win.txt
 #
 
-aenum==2.2.6
+aenum==3.1.11
 
 nrtest==0.2.5
 
--f https://github.com/SWMM-Project/swmm-python/releases/download/v0.6.0-rc.1/swmm_toolkit-0.5.0-cp37-cp37m-macosx_10_10_x86_64.whl
-swmm-toolkit==0.5.0
+https://github.com/SWMM-Project/swmm-python/releases/download/v0.15.2/swmm_toolkit-0.15.2-cp311-cp311-macosx_10_9_x86_64.whl
+swmm-toolkit==0.15.2
 
--f https://github.com/SWMM-Project/swmm-python/releases/download/v0.6.0-rc.1/nrtest_swmm-0.6.0-py3-none-any.whl
-nrtest-swmm==0.6.0
+https://github.com/SWMM-Project/swmm-python/releases/download/v0.15.2/nrtest_swmm-0.7.0-py3-none-any.whl
+nrtest-swmm==0.7.0

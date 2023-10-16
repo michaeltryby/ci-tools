@@ -47,16 +47,20 @@ else
     BUILD_ID="unknown"
 fi
 
+# determine SUT version
+V=$( ${ABS_BUILD_PATH}/${TEST_CMD} -v )
+VERSION=${V:1}
+[[ ! -v VERSION ]] && { echo "ERROR: VERSION could not be determined"; return 1 }
 
-# determine version
-VERSION=$( git rev-parse --short HEAD )
-[[ ! -v VERSION ]] && { echo "ERROR: VERSION must be determined"; return 1 }
+# determine git hash
+GIT_HASH=$( git rev-parse --short HEAD )
+[[ ! -v GIT_HASH ]] && { echo "ERROR: GIT_HASH could not be determined"; return 1 }
 
 cat<<EOF
 {
     "name" : "${PROJECT}",
     "version" : "${VERSION}",
-    "description" : "${PLATFORM} ${BUILD_ID}",
+    "description" : "${PLATFORM} ${BUILD_ID} ${GIT_HASH}",
     "setup_script" : "",
     "exe" : "${ABS_BUILD_PATH}/${TEST_CMD}"
 }
