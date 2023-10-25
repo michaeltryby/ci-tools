@@ -126,8 +126,8 @@ MANIFEST_FILE=$( find . -name manifest.json )
 if [ -v MANIFEST_FILE ]; then
     while read line; do
         if [[ $line == *"${PLATFORM} "* ]]; then
-            REF_BUILD_ID=${line#*"${PLATFORM} "}
-            REF_BUILD_ID=${REF_BUILD_ID//"\","/""}
+            tokens=(${(s: :)line})
+            REF_BUILD_ID=$tokens[3]
         fi
     done < $MANIFEST_FILE
 else
