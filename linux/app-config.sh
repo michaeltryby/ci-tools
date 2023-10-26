@@ -24,8 +24,11 @@
 type git >/dev/null 2>&1 || { echo "ERROR: git not installed"; exit 1; }
 
 
-# check that env variables are set
-if [[ ! -v PROJECT ]]; then echo "ERROR: PROJECT must be defined"; exit 1; fi
+# check that PROJECT is defined
+if [ -z "${PROJECT}" ]; then
+    echo "ERROR: PROJECT must be defined";
+    exit 1;
+fi
 
 # check if project is swmm otherwise EPANET
 TEST_CMD="run${PROJECT}"
@@ -49,20 +52,24 @@ fi
 # determine SUT version
 V=$( ${ABS_BUILD_PATH}/${TEST_CMD} -v )
 VERSION=${V:1}
-[[ ! -z VERSION ]] && { echo "ERROR: VERSION could not be determined"; return 1 }
+if [ -z ${VERSION} ]; then
+    echo "ERROR: VERSION could not be determined";
+    exit 1;
+fi
 
 # determine version
 GIT_HASH=$( git rev-parse --short HEAD )
-if [ -z ${GIT_HASH} ]; then echo "ERROR: GIT_HASH must be determined"; exit 1; fi;
-
-build_description="${PLATFORM} ${BUILD_ID}"
+if [ -z ${GIT_HASH} ]; then
+    echo "ERROR: GIT_HASH must be determined";
+    exit 1;
+fi
 
 cat<<EOF
 {
-    "name" : "${PROJECT}",
-    "version" : "${VERSION}",
-    "description" : "${PLATFORM} ${BUILD_ID} ${GIT_HASH}",
-    "setup_script" : "",
-    "exe" : "${ABS_BUILD_PATH}/${TEST_CMD}"
+   "name" : "${PROJECT}",
+   "version" : "${VERSION}",
+   "description" : "${PLATFORM} ${BUILD_ID} ${GIT_HASH}",
+   "setup_script" : "",
+   "exe" : "${ABS_BUILD_PATH}/${TEST_CMD}"
 }
 EOF
