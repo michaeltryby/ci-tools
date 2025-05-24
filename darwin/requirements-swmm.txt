@@ -20,4 +20,4 @@ nrtest==0.2.5
 
 swmm-toolkit==0.15.2
 
-nrtest-swmm==0.7.0
+nrtest-swmm==0.8.0
