@@ -92,7 +92,7 @@ else
     cp ./${BUILD_HOME}/*.tar.gz ./upload >&1
 fi
 
-export PLATFORM="darwin"
+export PLATFORM="${$( uname ):l}_$( uname -m )"
 
 #GitHub Actions
 echo "PLATFORM=$PLATFORM" >> $GITHUB_ENV
