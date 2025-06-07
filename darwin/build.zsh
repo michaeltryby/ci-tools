@@ -1,5 +1,5 @@
 #!/usr/bin/env zsh
-#
+
 #
 #  build.zsh - Builds swmm/epanet executable
 #
@@ -15,7 +15,7 @@ cat << EOF
 
 Build SWMM/EPANET executables using CMake presets.
 
-Usage: 
+Usage:
   build.zsh [options]
 
 Options:
@@ -27,7 +27,7 @@ Environment:
   BUILD_HOME            Directory for build artifacts (default: build)
 
   PROJECT               Set to 'swmm' or 'epanet' to specify project
-  
+
   PLATFORM              Set to 'darwin_x86_64' or 'darwin_arm64' based on system architecture
 
 Examples:
