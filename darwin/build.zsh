@@ -20,14 +20,12 @@ Usage:
 
 Options:
   -p, --preset PRESET   Specify the CMake preset to use (default: darwin-release)
-  -l, --list            List available CMake presets
+  -l, --list            List available CMake configure presets
   -h, --help            Display this help message and exit
 
 Environment:
   BUILD_HOME            Directory for build artifacts (default: build)
-
   PROJECT               Set to 'swmm' or 'epanet' to specify project
-
   PLATFORM              Set to 'darwin_x86_64' or 'darwin_arm64' based on system architecture
 
 Examples:
@@ -52,6 +50,15 @@ cd ./../../
 PROJECT_DIR=${PWD}
 
 
+# Check requirements
+if ! command -v cmake &> /dev/null; then
+    echo "Error: cmake not installed"
+fi
+
+# set defaults
+export BUILD_HOME="build"
+PRESET="darwin-release"
+
 # determine project
 if [[ ! -v PROJECT ]]
 then
@@ -61,15 +68,10 @@ fi
 # check that PROJECT is defined
 [[ ! -v PROJECT ]] && { echo "ERROR: PROJECT must be defined"; return 1 }
 
-
 # prepare for artifact upload
 if [ ! -d upload ]; then
     mkdir upload
 fi
-
-# set defaults
-export BUILD_HOME="build"
-PRESET="darwin-release"
 
 
 while [[ $# -gt 0 ]]
@@ -88,23 +90,31 @@ case "$1" in
     return 0
     ;;
     *)
-    shift
+    echo "Error: Unknown option: $1"
+    print_usage
+    return 1
     ;;
 esac
 done
 
 
-echo CHECK: using PRESET = ${PRESET}
+# Validate preset name - must end with debug or release
+if [[ ! "${PRESET}" == *"debug" && ! "${PRESET}" == *"release" ]]; then
+    echo "Error: Preset ${PRESET} must end with 'debug' or 'release'"
+    return 1
+else
+    echo CHECK: using PRESET = ${PRESET}
+fi
 
 # perform the build using presets
-if [[ ${RESULT} -eq 0 && "${PRESET}" == *"debug" ]]; then
+if [[ "${PRESET}" == *"debug" ]]; then
     echo "Building debug preset and running tests:"
     cmake --preset ${PRESET} && cmake --build --preset ${PRESET}
     ctest --preset ${PRESET} --output-on-failure
     RESULT=$?
-elif [[ ${RESULT} -eq 0 ]]; then
+elif [[ "${PRESET}" == *"release" ]]; then
     echo "Building release preset and packaging artifacts:"
-        cmake --preset ${PRESET} && cmake --build --preset ${PRESET} --target package
+    cmake --preset ${PRESET} && cmake --build --preset ${PRESET} --target package
     RESULT=$?
     cp ./build/${PRESET}/*.tar.gz ./upload 2>/dev/null || true
 fi
