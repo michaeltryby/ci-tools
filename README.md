@@ -9,7 +9,7 @@
 --->
 
 # ci-tools
-Tools for local and remote testing for SWMM and EPANET
+Local and remote testing tools for SWMM and EPANET
 
 
 ![1520204567520](https://github.com/michaeltryby/ci-tools/assets/6942309/b2ffad8e-d94c-47b1-a764-e006a93576a8)
