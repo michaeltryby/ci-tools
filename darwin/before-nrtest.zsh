@@ -1,24 +1,12 @@
 #!/usr/bin/env zsh
+
 #
-#  before-nrtest.sh - Runs before numerical regression test
+#  before-nrtest.zsh - Runs before numerical regression test
 #
 #  Date Created: Nov 15, 2017
 #       Updated: May 5, 2021
 #
 #  Author:       See AUTHORS
-#
-#  Dependencies:
-#    curl
-#    tar
-#
-#  Environment Variables:
-#    PROJECT
-#    BUILD_HOME - relative path
-#    PLATFORM
-#    NRTESTS_URL
-#
-#  Arguments:
-#    1 - (RELEASE_TAG)  - Release tag
 #
 #  Notes:
 #    Tests and benchmark files are stored in the swmm-nrtestsuite repo or in
@@ -34,13 +22,94 @@
 
 export TEST_HOME="nrtests"
 
+# Cleanup function for consistent error handling
+cleanup_and_exit() {
+    local exit_code=${1:-1}
+    
+    # Return to original directory if it was set
+    if [ -n "${CUR_DIR}" ]; then
+        cd "${CUR_DIR}"
+    fi
+    
+    # Clean up variables
+    unset RELEASE_TAG 2>/dev/null
+    
+    return $exit_code
+}
+
+# Function to display usage information
+usage() {
+    cat << EOF
+before-nrtest.zsh -- Performs setup for numerical regression test
+
+USAGE:
+    before-nrtest.zsh [OPTIONS] [RELEASE_TAG]
+
+DESCRIPTION:
+    Stages files for numerical regression testing by downloading test suites
+    and benchmarks from GitHub. This script prepares the test environment
+    before running numerical regression tests.
+
+OPTIONS:
+    -h, --help      Show this help message and exit
+
+ARGUMENTS:
+    RELEASE_TAG     Optional release tag to specify which version of tests
+                    and benchmarks to use. If not provided, uses the latest
+                    tagged release from the repository.
+
+REQUIRED ENVIRONMENT VARIABLES:
+    PROJECT         Name of the project (e.g., 'swmm', 'epanet')
+    BUILD_HOME      Relative path to build directory
+    PLATFORM        Target platform identifier
+
+OPTIONAL ENVIRONMENT VARIABLES:
+    NRTESTS_URL     URL to GitHub repository containing test suite
+                    (default: https://github.com/USEPA/\${PROJECT}-nrtestsuite)
+
+DEPENDENCIES:
+    - curl (for downloading files)
+    - tar (for extracting archives)
+
+EXAMPLES:
+    # Use latest release
+    $(basename "$0")
+
+    # Use specific release tag
+    $(basename "$0") v1.2.0
+
+    # Show help
+    $(basename "$0") --help
+EOF
+}
+
+# Parse command line arguments
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -h|--help)
+            usage
+            return 0
+            ;;
+        -*)
+            echo "ERROR: Unknown option: $1"
+            echo "Use -h or --help for usage information"
+            return 1
+            ;;
+        *)
+            # This is the RELEASE_TAG argument
+            RELEASE_TAG_ARG="$1"
+            break
+            ;;
+    esac
+    shift
+done
 
 echo INFO: Staging files for regression testing
 
 # check that env variables are set
 REQUIRED_VARS=(PROJECT BUILD_HOME PLATFORM)
 for i in ${REQUIRED_VARS}; do
-    [[ ! -v ${i} ]] && { echo "ERROR: $i must be defined"; return 1 }
+    [[ ! -v ${i} ]] && { echo "ERROR: $i must be defined"; cleanup_and_exit 1; }
 done
 echo "CHECK: all required variables are set"
 
@@ -68,23 +137,25 @@ fi
 
 curl -Ifs -o /dev/null ${NRTESTS_URL}
 if [ $? -ne 0 ]; then
-    echo ERROR: NRTESTS_URL = ${NRTESTS_URL} does not exist; cd ${CUR_DIR}; return 1
+    echo "ERROR: NRTESTS_URL = ${NRTESTS_URL} does not exist"
+    cleanup_and_exit 1
 fi
 
 
 # if no release tag arg determine latest else use passed argument
-if [ -z "$1" ]; then
+if [ -z "$RELEASE_TAG_ARG" ]; then
     echo INFO: Checking latest nrtestsuite release tag ...
     RELEASE_TAG=$( basename $( curl -Ls -o /dev/null -w %{url_effective} "${NRTESTS_URL}/releases/latest" ) )
 else
-    RELEASE_TAG=$1
+    RELEASE_TAG=$RELEASE_TAG_ARG
 fi
 
 # perform release tag check
 if [ -v RELEASE_TAG ]; then
     echo CHECK: using RELEASE_TAG = ${RELEASE_TAG}
 else
-    echo "ERROR: tag RELEASE_TAG is invalid" ; cd ${CUR_DIR}; return 1
+    echo "ERROR: tag RELEASE_TAG is invalid"
+    cleanup_and_exit 1
 fi
 
 
@@ -105,7 +176,8 @@ curl -fsSL -o benchmark.tar.gz ${BENCHFILES_URL}
 if [ -f nrtestfiles.tar.gz ]; then
     tar xzf nrtestfiles.tar.gz
 else
-    echo "ERROR: file nrtestfiles.tar.gz does not exist"; cd ${CUR_DIR}; return 1
+    echo "ERROR: file nrtestfiles.tar.gz does not exist"
+    cleanup_and_exit 1
 fi
 
 # create benchmark dir and extract benchmarks
@@ -146,10 +218,5 @@ export REF_BUILD_ID=$REF_BUILD_ID
 echo "REF_BUILD_ID=$REF_BUILD_ID" >> $GITHUB_ENV
 
 
-# clean up
-unset RELEASE_TAG
-
-# return user to current dir
-cd ${CUR_DIR}
-
-return 0
+# Normal completion cleanup
+cleanup_and_exit 0
