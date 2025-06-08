@@ -9,18 +9,6 @@
 #  Author:       See AUTHORS
 #
 
-# Cleanup function for consistent error handling
-cleanup_and_exit() {
-    local exit_code=${1:-1}
-
-    # Return to original directory if it was set
-    if [ -n "${CUR_DIR}" ]; then
-        cd "${CUR_DIR}"
-    fi
-
-    return $exit_code
-}
-
 # Function to display usage information
 usage() {
     cat << EOF
@@ -74,7 +62,7 @@ while [[ $# -gt 0 ]]; do
         -*)
             echo "ERROR: Unknown option: $1"
             echo "Use -h or --help for usage information"
-            cleanup_and_exit 1
+            cd ${CUR_DIR}; return 1
             ;;
         *)
             # This is the SUT_BUILD_ID argument
@@ -88,7 +76,7 @@ done
 # check that env variables are set
 REQUIRED_VARS=(PROJECT BUILD_HOME TEST_HOME PLATFORM REF_BUILD_ID)
 for i in ${REQUIRED_VARS}; do
-    [[ ! -v ${i} ]] && { echo "ERROR: ${i} must be defined"; cleanup_and_exit 1; }
+    [[ ! -v ${i} ]] && { echo "ERROR: ${i} must be defined"; cd ${CUR_DIR}; return 1; }
 done
 
 
@@ -171,5 +159,7 @@ else
     mv benchmark-${PLATFORM}.tar.gz ${PROJ_DIR}/upload/benchmark-${PLATFORM}.tar.gz
 fi
 
-# Normal completion cleanup
-cleanup_and_exit $RESULT
+# return user to current dir
+cd ${CUR_DIR}
+
+return $RESULT

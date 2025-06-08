@@ -22,20 +22,6 @@
 
 export TEST_HOME="nrtests"
 
-# Cleanup function for consistent error handling
-cleanup_and_exit() {
-    local exit_code=${1:-1}
-
-    # Return to original directory if it was set
-    if [ -n "${CUR_DIR}" ]; then
-        cd "${CUR_DIR}"
-    fi
-
-    # Clean up variables
-    unset RELEASE_TAG 2>/dev/null
-
-    return $exit_code
-}
 
 # Function to display usage information
 usage() {
@@ -109,7 +95,7 @@ echo INFO: Staging files for regression testing
 # check that env variables are set
 REQUIRED_VARS=(PROJECT BUILD_HOME PLATFORM)
 for i in ${REQUIRED_VARS}; do
-    [[ ! -v ${i} ]] && { echo "ERROR: $i must be defined"; cleanup_and_exit 1; }
+    [[ ! -v ${i} ]] && { echo "ERROR: $i must be defined"; cd ${CUR_DIR}; return 1; }
 done
 echo "CHECK: all required variables are set"
 
@@ -137,8 +123,7 @@ fi
 
 curl -Ifs -o /dev/null ${NRTESTS_URL}
 if [ $? -ne 0 ]; then
-    echo "ERROR: NRTESTS_URL = ${NRTESTS_URL} does not exist"
-    cleanup_and_exit 1
+    echo "ERROR: NRTESTS_URL = ${NRTESTS_URL} does not exist"; cd ${CUR_DIR}; return 1
 fi
 
 
@@ -154,8 +139,7 @@ fi
 if [ -v RELEASE_TAG ]; then
     echo CHECK: using RELEASE_TAG = ${RELEASE_TAG}
 else
-    echo "ERROR: tag RELEASE_TAG is invalid"
-    cleanup_and_exit 1
+    echo "ERROR: tag RELEASE_TAG is invalid"; cd ${CUR_DIR}; return 1
 fi
 
 
@@ -176,8 +160,7 @@ curl -fsSL -o benchmark.tar.gz ${BENCHFILES_URL}
 if [ -f nrtestfiles.tar.gz ]; then
     tar xzf nrtestfiles.tar.gz
 else
-    echo "ERROR: file nrtestfiles.tar.gz does not exist"
-    cleanup_and_exit 1
+    echo "ERROR: file nrtestfiles.tar.gz does not exist"; cd ${CUR_DIR}; return 1
 fi
 
 # create benchmark dir and extract benchmarks
@@ -218,5 +201,10 @@ export REF_BUILD_ID=$REF_BUILD_ID
 echo "REF_BUILD_ID=$REF_BUILD_ID" >> $GITHUB_ENV
 
 
-# Normal completion cleanup
-cleanup_and_exit 0
+# clean up
+unset RELEASE_TAG
+
+# return user to current dir
+cd ${CUR_DIR}
+
+return 0
