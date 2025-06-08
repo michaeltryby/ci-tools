@@ -3,8 +3,8 @@
 #
 #  before-nrtest.zsh - Runs before numerical regression test
 #
-#  Date Created: Nov 15, 2017
-#       Updated: May 5, 2021
+#  Date Created: 11/15/2017
+#       Updated: 06/08/2025
 #
 #  Author:       See AUTHORS
 #
@@ -25,15 +25,15 @@ export TEST_HOME="nrtests"
 # Cleanup function for consistent error handling
 cleanup_and_exit() {
     local exit_code=${1:-1}
-    
+
     # Return to original directory if it was set
     if [ -n "${CUR_DIR}" ]; then
         cd "${CUR_DIR}"
     fi
-    
+
     # Clean up variables
     unset RELEASE_TAG 2>/dev/null
-    
+
     return $exit_code
 }
 

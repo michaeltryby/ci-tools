@@ -4,34 +4,61 @@
 #  build.zsh - Builds swmm/epanet executable
 #
 #  Date Created: 06/07/2025
-#       Updated:
+#       Updated: 06/08/2025
 #
 #  Author:  Michael E. Tryby
 #
 
+# Cleanup function for consistent error handling
+cleanup_and_exit() {
+    local exit_code=${1:-1}
+
+    # Return to original directory if it was set
+    if [ -n "${CUR_DIR}" ]; then
+        cd "${CUR_DIR}"
+    fi
+
+    return $exit_code
+}
+
 # Function to display usage information
-print_usage() {
-cat << EOF
+usage() {
+    cat << EOF
+build.zsh -- Builds SWMM/EPANET executables using CMake presets
 
-Build SWMM/EPANET executables using CMake presets.
+USAGE:
+    build.zsh [OPTIONS]
 
-Usage:
-  build.zsh [options]
+DESCRIPTION:
+    Builds SWMM/EPANET executables using CMake presets. Supports both debug
+    and release builds with automatic testing for debug builds and packaging
+    for release builds.
 
-Options:
-  -p, --preset PRESET   Specify the CMake preset to use (default: darwin-release)
-  -l, --list            List available CMake configure presets
-  -h, --help            Display this help message and exit
+OPTIONS:
+    -p, --preset PRESET   Specify the CMake preset to use (default: darwin-release)
+    -l, --list            List available CMake configure presets
+    -h, --help            Show this help message and exit
 
-Environment:
-  BUILD_HOME            Directory for build artifacts (default: build)
-  PROJECT               Set to 'swmm' or 'epanet' to specify project
-  PLATFORM              Set to 'darwin_x86_64' or 'darwin_arm64' based on system architecture
+REQUIRED ENVIRONMENT VARIABLES:
+    PROJECT               Set to 'swmm' or 'epanet' to specify project
+    BUILD_HOME            Directory for build artifacts (default: build)
+    PLATFORM              Set to 'darwin_x86_64' or 'darwin_arm64' based on system architecture
 
-Examples:
-  build.zsh -l                  List available configure presets
-  build.zsh                     Build with default preset (darwin-release)
-  build.zsh -p darwin-debug     Build with debug preset and run tests
+DEPENDENCIES:
+    - cmake (for building executables)
+
+EXAMPLES:
+    # List available configure presets
+    build.zsh -l
+
+    # Build with default preset (darwin-release)
+    build.zsh
+
+    # Build with debug preset and run tests
+    build.zsh -p darwin-debug
+
+    # Show help
+    build.zsh --help
 EOF
 }
 
@@ -53,6 +80,7 @@ PROJECT_DIR=${PWD}
 # Check requirements
 if ! command -v cmake &> /dev/null; then
     echo "Error: cmake not installed"
+    cleanup_and_exit 1
 fi
 
 # set defaults
@@ -66,7 +94,7 @@ then
 [[ $( basename $PROJECT_DIR ) = ((#i)'WAT'*|(#i)'EPA'*) ]] && { export PROJECT="epanet" }
 fi
 # check that PROJECT is defined
-[[ ! -v PROJECT ]] && { echo "ERROR: PROJECT must be defined"; return 1 }
+[[ ! -v PROJECT ]] && { echo "ERROR: PROJECT must be defined"; cleanup_and_exit 1; }
 
 # prepare for artifact upload
 if [ ! -d upload ]; then
@@ -86,13 +114,13 @@ case "$1" in
     return 0
     ;;
     -h|--help)
-    print_usage
+    usage
     return 0
     ;;
     *)
     echo "Error: Unknown option: $1"
-    print_usage
-    return 1
+    usage
+    cleanup_and_exit 1
     ;;
 esac
 done
@@ -101,7 +129,7 @@ done
 # Validate preset name - must end with debug or release
 if [[ ! "${PRESET}" == *"debug" && ! "${PRESET}" == *"release" ]]; then
     echo "Error: Preset ${PRESET} must end with 'debug' or 'release'"
-    return 1
+    cleanup_and_exit 1
 else
     echo CHECK: using PRESET = ${PRESET}
 fi
@@ -129,7 +157,5 @@ if [[ -v GITHUB_ENV ]]; then
 fi
 
 
-# return user to current dir
-cd ${CUR_DIR}
-
-return $RESULT
+# Normal completion cleanup
+cleanup_and_exit $RESULT

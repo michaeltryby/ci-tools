@@ -4,29 +4,92 @@
 #  run-nrtests.zsh - Runs numerical regression test
 #
 #  Date Created: 04/01/2020
-#       Updated: 08/21/2020
+#       Updated: 06/08/2025
 #
 #  Author:       See AUTHORS
 #
-#  Dependencies:
-#    python -m pip install -r requirements.txt
-#
-#  Environment Variables:
-#    PROJECT
-#    BUILD_HOME - relative path
-#    TEST_HOME  - relative path
-#    PLATFORM
-#    REF_BUILD_ID
-#
-#  Arguments:
-#    2 - (SUT_BUILD_ID) - optional argument
-#
 
+
+# Cleanup function for consistent error handling
+cleanup_and_exit() {
+    local exit_code=${1:-1}
+
+    # Return to original directory if it was set
+    if [ -n "${CUR_DIR}" ]; then
+        cd "${CUR_DIR}"
+    fi
+
+    return $exit_code
+}
+
+# Function to display usage information
+usage() {
+    cat << EOF
+run-nrtests.zsh -- Runs numerical regression tests
+
+USAGE:
+    run-nrtests.zsh [OPTIONS] [SUT_BUILD_ID]
+
+DESCRIPTION:
+    Executes numerical regression tests using nrtest and compares results
+    against reference benchmarks. Creates test artifacts and performs
+    comparison analysis.
+
+OPTIONS:
+    -h, --help      Show this help message and exit
+
+ARGUMENTS:
+    SUT_BUILD_ID    Optional build identifier for the system under test.
+                    If not provided, generates a random identifier.
+
+REQUIRED ENVIRONMENT VARIABLES:
+    PROJECT         Name of the project (e.g., 'swmm', 'epanet')
+    BUILD_HOME      Relative path to build directory
+    TEST_HOME       Relative path to test directory
+    PLATFORM        Target platform identifier
+    REF_BUILD_ID    Reference build identifier for comparison
+
+DEPENDENCIES:
+    - python with nrtest package installed
+    - pip install -r requirements.txt
+
+EXAMPLES:
+    # Run tests with random build ID
+    $(basename "$0")
+
+    # Run tests with specific build ID
+    $(basename "$0") my-build-123
+
+    # Show help
+    $(basename "$0") --help
+EOF
+}
+
+# Parse command line arguments
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -h|--help)
+            usage
+            return 0
+            ;;
+        -*)
+            echo "ERROR: Unknown option: $1"
+            echo "Use -h or --help for usage information"
+            cleanup_and_exit 1
+            ;;
+        *)
+            # This is the SUT_BUILD_ID argument
+            SUT_BUILD_ID_ARG="$1"
+            break
+            ;;
+    esac
+    shift
+done
 
 # check that env variables are set
 REQUIRED_VARS=(PROJECT BUILD_HOME TEST_HOME PLATFORM REF_BUILD_ID)
 for i in ${REQUIRED_VARS}; do
-    [[ ! -v ${i} ]] && { echo "ERROR: ${i} must be defined"; return 1 }
+    [[ ! -v ${i} ]] && { echo "ERROR: ${i} must be defined"; cleanup_and_exit 1; }
 done
 
 
@@ -42,8 +105,8 @@ cd ${TEST_HOME}
 
 
 # use passed argument or generate a "unique" identifier
-if [ ! -z "$1" ]; then
-    SUT_BUILD_ID=$1
+if [ ! -z "$SUT_BUILD_ID_ARG" ]; then
+    SUT_BUILD_ID=$SUT_BUILD_ID_ARG
 else
     SUT_BUILD_ID=$RANDOM
 fi
@@ -109,7 +172,5 @@ else
     mv benchmark-${PLATFORM}.tar.gz ${PROJ_DIR}/upload/benchmark-${PLATFORM}.tar.gz
 fi
 
-# return user to current dir
-cd ${CUR_DIR}
-
-return $RESULT
+# Normal completion cleanup
+cleanup_and_exit $RESULT
