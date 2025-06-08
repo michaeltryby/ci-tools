@@ -117,7 +117,7 @@ if [ ! -a "./apps/${PROJECT}-${SUT_BUILD_ID}.json" ]; then
     ${PLATFORM} ${SUT_BUILD_ID} > "./apps/${PROJECT}-${SUT_BUILD_ID}.json"
 fi
 
-# build list of directories contaiing tests
+# build list of directories containing tests
 TESTS=$( find ./tests -mindepth 1 -type d -follow | paste -sd " " - )
 
 # build nrtest execute command
