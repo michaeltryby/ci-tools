@@ -29,13 +29,13 @@ Environment:
   PLATFORM              Set to 'darwin_x86_64' or 'darwin_arm64' based on system architecture
 
 Examples:
-  build.zsh -l                  List available presets
+  build.zsh -l                  List available configure presets
   build.zsh                     Build with default preset (darwin-release)
   build.zsh -p darwin-debug     Build with debug preset and run tests
 EOF
 }
 
-# Function to list available CMake presets
+# Function to list available CMake configure presets
 list_presets() {
     cmake --list-presets
 }
