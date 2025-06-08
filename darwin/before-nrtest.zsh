@@ -198,8 +198,9 @@ fi
 export REF_BUILD_ID=$REF_BUILD_ID
 
 # GitHub Actions
-echo "REF_BUILD_ID=$REF_BUILD_ID" >> $GITHUB_ENV
-
+if [[ -v GITHUB_ENV ]]; then
+    echo "REF_BUILD_ID=$REF_BUILD_ID" >> $GITHUB_ENV
+fi
 
 # clean up
 unset RELEASE_TAG

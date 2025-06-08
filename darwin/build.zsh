@@ -31,6 +31,7 @@ REQUIRED ENVIRONMENT VARIABLES:
     PROJECT               Set to 'swmm' or 'epanet' to specify project
     BUILD_HOME            Directory for build artifacts (default: build)
     PLATFORM              Set to 'darwin_x86_64' or 'darwin_arm64' based on system architecture
+    PRESET                CMake preset to use for building (default: darwin-release)
 
 DEPENDENCIES:
     - cmake (for building executables)
@@ -122,6 +123,10 @@ else
     echo CHECK: using PRESET = ${PRESET}
 fi
 
+
+export PRESET=$PRESET
+
+
 # perform the build using presets
 if [[ "${PRESET}" == *"debug" ]]; then
     echo "Building debug preset and running tests:"
@@ -137,16 +142,11 @@ fi
 
 
 # set platform variable
-export PLATFORM="${$( uname ):l}_$( uname -m )"
+export PLATFORM="${$( uname ):l}-$( uname -m )"
 
 #GitHub Actions
 if [[ -v GITHUB_ENV ]]; then
     echo "PLATFORM=$PLATFORM" >> $GITHUB_ENV
-elif [[ "${PRESET}" == *"release" ]]; then
-    echo "Building release preset and packaging artifacts:"
-    cmake --preset ${PRESET} && cmake --build --preset ${PRESET} --target package
-    RESULT=$?
-    cp ./build/${PRESET}/*.tar.gz ./upload 2>/dev/null || true
 fi
 
 

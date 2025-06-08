@@ -101,7 +101,7 @@ fi
 # check if app config file exists
 if [ ! -a "./apps/${PROJECT}-${SUT_BUILD_ID}.json" ]; then
     mkdir -p "apps"
-    ${SCRIPT_HOME}/app-config.zsh "${PROJ_DIR}/${BUILD_HOME}/bin/Release" \
+    ${SCRIPT_HOME}/app-config.zsh "${PROJ_DIR}/${BUILD_HOME}/${PRESET}/bin/Release" \
     ${PLATFORM} ${SUT_BUILD_ID} > "./apps/${PROJECT}-${SUT_BUILD_ID}.json"
 fi
 
