@@ -9,7 +9,6 @@
 #  Author:       See AUTHORS
 #
 
-
 # Cleanup function for consistent error handling
 cleanup_and_exit() {
     local exit_code=${1:-1}
