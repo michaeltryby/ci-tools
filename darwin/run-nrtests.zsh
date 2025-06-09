@@ -42,13 +42,13 @@ DEPENDENCIES:
 
 EXAMPLES:
     # Run tests with random build ID
-    $(basename "$0")
+    run-nrtests.zsh
 
     # Run tests with specific build ID
-    $(basename "$0") my-build-123
+    run-nrtests.zsh my-build-123
 
     # Show help
-    $(basename "$0") --help
+    run-nrtests.zsh --help
 EOF
 }
 

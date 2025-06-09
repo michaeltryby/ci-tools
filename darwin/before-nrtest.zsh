@@ -59,13 +59,13 @@ DEPENDENCIES:
 
 EXAMPLES:
     # Use latest release
-    $(basename "$0")
+    before-nrtest.zsh
 
     # Use specific release tag
-    $(basename "$0") v1.2.0
+    before-nrtest.zsh v1.2.0
 
     # Show help
-    $(basename "$0") --help
+    before-nrtest.zsh --help
 EOF
 }
 
